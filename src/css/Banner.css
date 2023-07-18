@@ -1,0 +1,18 @@
+.slick-track{
+  height: 60vh;
+}
+
+.slick-slide{
+  position: relative;
+  height: 100%;
+}
+
+.slick-slide>div{
+  position: absolute;
+  inset: 0;
+}
+
+.slick-slide img{
+    object-fit: contain;
+    height: 100%;
+}

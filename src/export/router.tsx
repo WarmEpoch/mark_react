@@ -1,0 +1,61 @@
+import { Navigate, Link, createBrowserRouter } from 'react-router-dom'
+import { lazy } from 'react'
+import App from '../App'
+
+const pageTsx = import.meta.glob('../views/**')
+
+const routesNames = [
+  {
+    path: '/mi',
+    name: '小米徕卡'
+  }, {
+    path: '/frame',
+    name: '极简单一'
+  }, {
+    path: '/jamb',
+    name: '边框简字',
+  }, {
+    path: '/flag',
+    name: '边框标志',
+  }, {
+    path: '/gins',
+    name: '边框简参',
+  }, {
+    path: '/centre',
+    name: '中心拍摄',
+  }
+]
+
+const routesItems = Object.entries(pageTsx).map(([path]) => {
+  const key = path.replace('../views', '').replace('.tsx', '').toLowerCase()
+  const name = routesNames.find(i => i.path === key)?.name || '敬请期待'
+  return {
+    key,
+    name,
+    label: <Link to={key} replace>{name}</Link>
+  }
+})
+
+const subRoutes = Object.entries(pageTsx).map(([path, tsx]) => {
+  const url = path.replace('../views/', '').replace('.tsx', '').toLowerCase()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const El = lazy(tsx as any)
+  return {
+    path: url,
+    element: <El />,
+  }
+})
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="mi" replace />,
+  },
+  {
+    path: "/",
+    element: <App />,
+    children: subRoutes,
+  },
+]);
+
+export { router, routesItems }

@@ -1,0 +1,45 @@
+{
+  "name": "mark_react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.1.1",
+    "@reduxjs/toolkit": "^1.9.5",
+    "ahooks": "^3.7.8",
+    "antd": "^5.7.0",
+    "canvas-size": "^1.2.6",
+    "downloadjs": "^1.4.7",
+    "exifr": "^7.1.3",
+    "heic2any": "^0.0.4",
+    "html2canvas": "^1.4.1",
+    "piexifjs": "^2.0.0-beta.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.7",
+    "react-router-dom": "^6.11.2",
+    "redux": "^4.2.1",
+    "vconsole": "^3.15.1"
+  },
+  "devDependencies": {
+    "@types/canvas-size": "^1.2.0",
+    "@types/downloadjs": "^1.4.3",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
+    "vite-plugin-html": "^3.2.0"
+  }
+}
