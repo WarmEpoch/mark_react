@@ -9,8 +9,8 @@ function Make() {
         <>
             <Banner>
                 {
-                    imgs.map((img, index) =>
-                        <Draw key={img.id} src={img.url} img={img} index={index} make={true} />
+                    imgs.map(img =>
+                        <Draw key={img.id} src={img.url} img={img} make={true} />
                     )
                 }
             </Banner>

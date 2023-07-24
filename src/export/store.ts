@@ -2,6 +2,7 @@ import { configureStore, PayloadAction } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { createSlice } from "@reduxjs/toolkit";
 import { IExif } from "piexifjs";
+import icons from "./icons";
 
 export interface ImgModel {
   id: number
@@ -12,8 +13,6 @@ export interface ImgModel {
   height: number
   scale: number
   maxScale: number
-  icon: string
-  filter: string
   exifr: {
     Make:         string | undefined
     Model:        string | undefined
@@ -33,27 +32,46 @@ export interface ImgModel {
   exif: IExif,
 }
 
-const initialImg: ImgModel[] = []
+export interface RImgModel extends ImgModel {
+  reveals: {
+    icon: string,
+    filter: string | undefined
+    h1: string | undefined,
+    h2: string | undefined,
+    h3: string | undefined,
+    h4: string | undefined,
+  }
+}
+
+const initialImg: RImgModel[] = []
 
 const imgService = createSlice({
   name: "imgs",
   initialState: initialImg,
   reducers: {
     addImg(state, action: PayloadAction<ImgModel>) {
-      state.push(action.payload);
+      state.push({...action.payload, ...{
+        reveals: {
+          icon: icons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || icons[0].val,
+          filter: void 0,
+          h1: action.payload.exifr.Model,
+          h2: `${action.payload.exifr.Focal && action.payload.exifr.Focal + 'mm'} ${action.payload.exifr.Fnumber && 'f/' + action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso && 'ISO' + action.payload.exifr.Iso}`,
+          h3: action.payload.exifr.Time,
+          h4: `${action.payload.exifr.Latitude.length > 0 ? Math.round(action.payload.exifr.Latitude[0]) + '°' + Math.round(action.payload.exifr.Latitude[1]) + "'" + Math.round(action.payload.exifr.Latitude[2]) + '"' + action.payload.exifr.LatitudeRef + ' ' + Math.round(action.payload.exifr.Longitude[0]) + '°' + Math.round(action.payload.exifr.Longitude[1]) + "'" + Math.round(action.payload.exifr.Longitude[2]) + '"' + action.payload.exifr.LongitudeRef : ''}`,
+        }
+      }});
     },
     removeImg(state, action: PayloadAction<number>){
-      console.log(action.payload)
       state.splice(action.payload,1)
     },
-    updateExifr<T extends keyof ImgModel["exifr"]>(state: ImgModel[], action: PayloadAction<{ index: number, key: T, value: ImgModel["exifr"][T] }>){
+    upReveal<T extends keyof RImgModel["reveals"]>(state: RImgModel[], action: PayloadAction<{ index: number, key: T, value: RImgModel["reveals"][T] }>){
       const { index, key, value } = action.payload;
-      state[index].exifr[key] = value
+      state[index].reveals[key] = value
     },
   },
 });
 
-export const { addImg, removeImg, updateExifr } = imgService.actions;
+export const { addImg, removeImg, upReveal } = imgService.actions;
 
 const initialIndex = 0
 
@@ -69,11 +87,79 @@ const indexService = createSlice({
 
 export const { upIndex } = indexService.actions;
 
+const initialReveals: string[] = JSON.parse(localStorage.getItem('reveals') || '[]')
+
+const revealService = createSlice({
+  name: "reveals",
+  initialState: initialReveals,
+  reducers: {
+    upReveals(state, action: PayloadAction<string>){
+      state.push(action.payload)
+      localStorage.setItem('reveals',JSON.stringify(state))
+    },
+    removeReveals(state, action: PayloadAction<number>){
+      state.splice(action.payload,1)
+      state.length > 0 ? localStorage.setItem('reveals',JSON.stringify(state)) : localStorage.removeItem('reveals')
+    }
+  },
+});
+
+export const { upReveals, removeReveals } = revealService.actions;
+
+const iconsReveals: [{name: string,value: string}] = JSON.parse(localStorage.getItem('icons') || '[]')
+
+const iconService = createSlice({
+  name: "icons",
+  initialState: iconsReveals,
+  reducers: {
+    upIcons(state, action: PayloadAction<{name: string, value: string}>) {
+      const { name, value } = action.payload
+      state.push({
+        name,
+        value
+      })
+      localStorage.setItem('icons',JSON.stringify(state))
+    },
+    removeIcons(state, action: PayloadAction<number>){
+      state.splice(action.payload, 1)
+      Object.keys(state).length > 0 ? localStorage.setItem('icons',JSON.stringify(state)) : localStorage.removeItem('icons')
+    }
+  }
+})
+
+export const { upIcons, removeIcons } = iconService.actions;
+
+
+const filterReveals: [{name: string,value: string}] = JSON.parse(localStorage.getItem('filter') || '[]')
+
+const filterService = createSlice({
+  name: "filter",
+  initialState: filterReveals,
+  reducers: {
+    upFilter(state, action: PayloadAction<{name: string, value: string}>) {
+      const { name, value } = action.payload
+      state.push({
+        name,
+        value
+      })
+      localStorage.setItem('filter',JSON.stringify(state))
+    },
+    removeFilter(state, action: PayloadAction<number>){
+      state.splice(action.payload, 1)
+      Object.keys(state).length > 0 ? localStorage.setItem('filter',JSON.stringify(state)) : localStorage.removeItem('filter')
+    }
+  }
+})
+
+export const { upFilter, removeFilter } = filterService.actions;
 
 export const store = configureStore({
     reducer:{
         imgs: imgService.reducer,
-        index: indexService.reducer
+        index: indexService.reducer,
+        reveals: revealService.reducer,
+        icons: iconService.reducer,
+        filter: filterService.reducer
     }
 })
 

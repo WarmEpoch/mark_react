@@ -6,7 +6,6 @@ import Draw from '../components/Draw'
 
 function Centre() {
   const imgs = useSelector((state: RootState) => state.imgs)
-  const i = useSelector((state: RootState) => state.index)
   return (
     <>
       <Banner>
@@ -16,7 +15,6 @@ function Centre() {
           )
         }
       </Banner>
-      {i}
     </>
   )
 }

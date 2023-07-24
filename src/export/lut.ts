@@ -11,8 +11,8 @@ export const CanvasAddfilter = async (lutSrc: string, canvasData: ImageData) => 
         const g = Math.floor(canvasData.data[i + 1] / 4);
         const b = Math.floor(canvasData.data[i + 2] / 4);
 
-        const lutX = (b % 8) * 64 + r;
-        const lutY = Math.floor(b / 8) * 64 + g;
+        const lutX = (b % 8) * (lutWidth / 8) + r;
+        const lutY = Math.floor(b / 8) * (lutWidth / 8) + g;
         const lutIndex = (lutY * lutWidth + lutX) * 4;
         
         canvasData.data[i] = lutData.data[lutIndex];

@@ -2,15 +2,15 @@ import { useEffect, useState, useRef } from "react"
 import html2canvas from 'html2canvas';
 import { imgBlobToBase64, imageDom, imageDomToSize, imageResize } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
-import { ImgModel } from "../export/store"
+import { RImgModel } from "../export/store"
 import { htmlCanvastoBlob, offScreenCanvastoBlob } from '../export/cavnvas'
-import Stencil from "./Stencil";
 import { useUnmount } from 'ahooks';
 import download from "downloadjs"
 import { CanvasAddfilter } from "../export/lut";
+import Stencil from "./Stencil";
 
 interface Props {
-    img: ImgModel
+    img: RImgModel
     src: string
     border?: number
     make?: boolean
@@ -23,7 +23,7 @@ function Draw(props: Props) {
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
     useEffect(() => {
-        (async () => {
+        setTimeout(async () => {
             setShow(false)
             div.current?.classList.add("show")
             const divUrl = await html2canvas(div.current as HTMLDivElement, {
@@ -48,8 +48,8 @@ function Draw(props: Props) {
                 willReadFrequency: true,
             }) as OffscreenCanvasRenderingContext2D
             context.drawImage(imgDom, borders, borders, srcWidth, srcHeight)
-            if (img.filter) {
-                const filterData = await CanvasAddfilter(img.filter, context.getImageData(0, 0, canvasWidth, canvasHeight))
+            if (img.reveals.filter) {
+                const filterData = await CanvasAddfilter(img.reveals.filter, context.getImageData(0, 0, canvasWidth, canvasHeight))
                 context.putImageData(filterData, 0, 0)
             }
             context.fillStyle = "#ffffff";
@@ -70,7 +70,7 @@ function Draw(props: Props) {
             }
             URL.revokeObjectURL(divUrl)
             setShow(true)
-        })()
+        })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [border, make, src, img])
 

@@ -21,7 +21,6 @@ const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
 })
 
-
 const useCanvasMaxSize = () => {
   const [canvasMaxSize,setCanvasMaxSize] = useState({
     width: 1080,
@@ -90,6 +89,7 @@ function App() {
       const output = await parse(file).catch(() => false)
       if (!output) {
         messageApi.warning('图像不规范')
+        setLoading(false)
         return false
       }
       const blob: Blob = await heic2any({
@@ -123,8 +123,6 @@ function App() {
         width: urlWidth,
         scale: canvaScale,
         maxScale: canvaScale,
-        icon: 'leica',
-        filter: '',
         exifr: {
           Make: output?.Make || void 0,
           Model: output?.Model || 'Immers Mark',
@@ -141,7 +139,7 @@ function App() {
           LensModel: output?.LensModel || void 0,
           LensMake: output?.LensMake || void 0,
         },
-        exif: imgBase64LoadExif(fileBase64)
+        exif: imgBase64LoadExif(fileBase64),
       }))
       setLoading(false)
 

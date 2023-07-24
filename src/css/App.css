@@ -49,20 +49,27 @@ svg, canvas{
 }
 
 .ant-layout-footer{
-    padding: 3% 6%;
+    padding: 3% 1%;
     width: 100%;
     overflow: auto;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: center; */
 }
 
 .ant-layout-footer>div{
     display: flex;
-    width: 90%;
+    /* width: 100%; */
+    max-width: 1080px;
+    margin: auto;
+    justify-content: space-between;
 }
 
 .ant-layout-footer::-webkit-scrollbar{
     width: 0;
+}
+
+.ant-layout-footer .ant-input[disabled]{
+    color: inherit;
 }
 
 .ant-btn{
@@ -71,6 +78,11 @@ svg, canvas{
 
 .ant-carousel{
     width: 100%;
+}
+
+.ant-upload-select, .ant-upload{
+    width: 100%;
+    display: inline-block;
 }
 
 .mark{
