@@ -1,27 +1,32 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, ReactNode } from "react"
 import html2canvas from 'html2canvas';
-import { imgBlobToBase64, imageDom, imageDomToSize, imageResize } from "../export/image";
+import { imgBlobToBase64, imageDom, imageDomToSize, imageResize, imgBase64ToBlob } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
-import { RImgModel } from "../export/store"
+import { RImgModel, RootState, upDraw, useAppDispatch } from "../export/store"
 import { htmlCanvastoBlob, offScreenCanvastoBlob } from '../export/cavnvas'
 import { useUnmount } from 'ahooks';
-import download from "downloadjs"
 import { CanvasAddfilter } from "../export/lut";
-import Stencil from "./Stencil";
+import { useSelector } from "react-redux";
 
 interface Props {
     img: RImgModel
-    src: string
+    children: ReactNode
     border?: number
-    make?: boolean
 }
 
 function Draw(props: Props) {
-    const { src, img, border = 0, make = false } = props
+    const { children, img, border = 0 } = props
+    const make = useSelector((state: RootState) => state.make)
     const div = useRef<HTMLDivElement>(null)
     const divStyleWidth = img.width > img.height ? (img.width + border * img.width / 100 * 2) * (img.scale / 100) : (img.height + border * img.height / 100 * 2) * (img.scale / 100)
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
+    const dispath = useAppDispatch()
+    useEffect(() => {
+        dispath(upDraw({id: img.id, value: makeImg}))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[makeImg])
+
     useEffect(() => {
         setTimeout(async () => {
             setShow(false)
@@ -36,6 +41,7 @@ function Draw(props: Props) {
                 return URL.createObjectURL(blob)
             })
             const divDom = await imageDom(divUrl)
+            const src = make ? img.url : img.src
             const imgDom = make && img.scale < 100 ? await imageDom(await imageResize(src, img.width * img.scale / 100)) : await imageDom(src)
             const { width: divWidth, height: divHeight } = imageDomToSize(divDom)
             const { width: srcWidth, height: srcHeight } = imageDomToSize(imgDom)
@@ -62,9 +68,8 @@ function Draw(props: Props) {
             URL.revokeObjectURL(makeImg)
             if (make) {
                 const blobBase64 = await imgBlobToBase64(blob)
-                const Base64Exif = imgBase64ToExif(img.exif, blobBase64)
-                setMakeImg(Base64Exif)
-                download(Base64Exif, `${img.name}.jpg`, 'image/jpeg')
+                const base64Exif = imgBase64ToExif(img.exif, blobBase64)
+                setMakeImg(imgBase64ToBlob(base64Exif))
             } else {
                 setMakeImg(URL.createObjectURL(blob))
             }
@@ -72,7 +77,7 @@ function Draw(props: Props) {
             setShow(true)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [border, make, src, img])
+    }, [border, make, img.reveals])
 
     useUnmount(() => {
         URL.revokeObjectURL(makeImg)
@@ -81,9 +86,9 @@ function Draw(props: Props) {
     return (
         <>
             <div ref={div} className="mark" style={{ width: `${divStyleWidth}px`, fontSize: img.width > img.height ? `${divStyleWidth * 0.018}px` : `${divStyleWidth * 0.033}px` }}>
-                <Stencil img={img} />
+                { children }
             </div>
-            <img src={makeImg} style={{ width: '100%', opacity: show ? '1' : '0' }} data-html2canvas-ignore />
+            <img src={makeImg} style={{ width: '100%', opacity: show ? '1' : '0' }} data-html2canvas-ignore/>
         </>
     )
 }

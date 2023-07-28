@@ -4,18 +4,18 @@ import {
   useLocation,
 } from "react-router-dom";
 import { Suspense, useEffect, useState } from "react"
-import { Button, Dropdown, Layout, Upload, message, Space, Spin, Drawer } from "antd";
+import { Button, Dropdown, Layout, Upload, message, Space, Spin } from "antd";
 import type { UploadProps } from 'antd';
 const { Header } = Layout;
 import { createFromIconfontCN, DownOutlined } from "@ant-design/icons"
 import { routesItems } from "./export/router"
 import { parse } from 'exifr'
 import heic2any from "heic2any"
-import { addImg, useAppDispatch } from './export/store';
+import { RootState, addImg, upMake, useAppDispatch } from './export/store';
 import { imageDomSize, imageResize, imgBlobToBase64 } from './export/image';
-import Make from './components/Make';
 import canvasSize from 'canvas-size';
 import { imgBase64LoadExif } from './export/piexif';
+import { useSelector } from 'react-redux';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
@@ -150,7 +150,8 @@ function App() {
     disabled: loading,
   }
 
-  const [making, setMaking] = useState(false);
+  const make = useSelector((state: RootState) => state.make)
+  const imgs = useSelector((state: RootState) => state.imgs)
 
   return (
     <>
@@ -163,14 +164,11 @@ function App() {
         <Space>
           <Upload {...UploadProps}>
             <Spin spinning={ loading }>
-              <Button type="dashed">选择</Button>
+              <Button type="dashed" disabled={make}>选择</Button>
             </Spin>
           </Upload>
-          <Button type="primary" onClick={() => setMaking(true)} disabled={loading}>生成</Button>
+          <Button type="primary" onClick={() => dispath(upMake())} disabled={ loading || imgs.length <= 0 }>{make ? '编辑' : '导出'}</Button>
         </Space>
-          <Drawer title="保存水印" placement="right" width="100%" onClose={() => setMaking(false)} open={making} destroyOnClose={true}>
-            { making && <Make />}
-          </Drawer>
       </Header>
       <Suspense>
         <Outlet />

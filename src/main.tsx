@@ -1,4 +1,3 @@
-// import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from "react-router-dom";
 import { router } from "./export/router"
@@ -16,11 +15,9 @@ const theme = {
 }
 
 createRoot(document.getElementById('root') as HTMLElement).render(
-  // <StrictMode>
   <ConfigProvider locale={ zhCN } theme={ theme }>
     <Provider store={store}>
       <RouterProvider router={ router } />
     </Provider>
   </ConfigProvider>
-  // </StrictMode>
 )

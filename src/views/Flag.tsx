@@ -12,7 +12,12 @@ function Flag() {
       <Banner>
         {
           imgs.map(img =>
-            <Draw key={img.id} img={img} src={img.src} border={4} />
+            <Draw key={img.id} img={img} border={4}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexFlow: 'column' }}>
+                <img src={img.reveals.icon} style={{ height: img.width > img.height ? '3.6em' : '3.3em', paddingTop: img.width > img.height ? '1em' : '1.2em' }} />
+                <p style={{ fontWeight: 'bold', fontSize: img.width > img.height ? '.86em' : '.82em', lineHeight: img.width > img.height ? '3.6em' : '2.8em' }}>{img.reveals.h1}</p>
+              </div>
+            </Draw>
           )
         }
       </Banner>

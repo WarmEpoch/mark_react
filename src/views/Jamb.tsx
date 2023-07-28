@@ -12,7 +12,11 @@ function Jamb() {
       <Banner>
         {
           imgs.map(img =>
-            <Draw key={img.id} img={img} src={img.src} border={3} />
+            <Draw key={img.id} img={img} border={3}>
+              <div style={{ boxSizing: 'border-box', display: 'flex', justifyContent: 'center', padding: img.width > img.height ? '1em 0' : '1em 0' }}>
+                <p style={{ fontWeight: '500', fontSize: img.width > img.height ? '.86em' : '.82em', lineHeight: img.width > img.height ? '2.2em' : '1.9em' }}>{img.reveals.h1}</p>
+              </div>
+            </Draw>
           )
         }
       </Banner>

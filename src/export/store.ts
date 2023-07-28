@@ -43,6 +43,7 @@ export interface RImgModel extends ImgModel {
     h3: string | undefined,
     h4: string | undefined,
   }
+  draw?: string | undefined
 }
 
 const initialImg: RImgModel[] = []
@@ -72,10 +73,15 @@ const imgService = createSlice({
       const { index, key, value } = action.payload;
       state[index].reveals[key] = value
     },
+    upDraw(state: RImgModel[], action: PayloadAction<{ id: RImgModel['id'], value: RImgModel["draw"] }>){
+      const { id, value } = action.payload;
+      const _index = state.findIndex(img => img.id == id)
+      state[_index]['draw'] = value
+    },
   },
 });
 
-export const { addImg, removeImg, upReveal } = imgService.actions;
+export const { addImg, removeImg, upReveal, upDraw } = imgService.actions;
 
 const initialIndex = 0
 
@@ -163,8 +169,8 @@ const makeService = createSlice({
   name: "make",
   initialState: initialMake,
   reducers: {
-    upMake(_state, action: PayloadAction<boolean>) {
-      return action.payload
+    upMake(state) {
+      return !state
     },
   }
 })
