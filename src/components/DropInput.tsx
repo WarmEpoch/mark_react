@@ -4,12 +4,12 @@ import { RootState, RImgModel, upReveal, useAppDispatch, upReveals, removeReveal
 import { useState } from "react";
 
 interface Props {
-    index: number
     name: keyof RImgModel['reveals']
 }
 function DropInput(props: Props) {
-    const { index, name: key } = props
+    const { name: key } = props
     const imgs = useSelector((state: RootState) => state.imgs)
+    const index = useSelector((state: RootState) => state.index)
     const reveals = useSelector((state: RootState) => state.reveals)
     const dispath = useAppDispatch()
 
@@ -28,7 +28,7 @@ function DropInput(props: Props) {
             key: 'Default',
             label: '默认参数',
             type: 'group',
-            children: Object.entries(imgs[index].exifr).filter(val => {
+            children: Object.entries(imgs[index]?.exifr || []).filter(val => {
                 return val[1] === imgs[index]?.reveals[key] || Array.isArray(val[1]) ? false : Boolean(val[1])
             }).map(item => {
                 return {
@@ -95,7 +95,6 @@ function DropInput(props: Props) {
     }
 
     return (
-
         <Dropdown.Button menu={{ items }}>
             <Tooltip placement="topLeft" title={tip} open={focus && tipShow}>
                 <Input style={{ minWidth: '8em' }} bordered={false} disabled={false} key={imgs[index]?.reveals[key]} defaultValue={imgs[index]?.reveals[key] || '空'} onChange={e => {

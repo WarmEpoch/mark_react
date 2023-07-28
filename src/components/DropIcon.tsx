@@ -6,12 +6,12 @@ import type { UploadProps } from 'antd';
 import { imgBlobToBase64 } from "../export/image";
 
 interface Props {
-    index: number
     name: keyof RImgModel['reveals']
 }
 function DropIcon(props: Props) {
-    const { index, name: key } = props
+    const { name: key } = props
     const imgs = useSelector((state: RootState) => state.imgs)
+    const index = useSelector((state: RootState) => state.index)
     const uploadIcons = useSelector((state: RootState) => state.icons)
     const dispath = useAppDispatch()
 
@@ -75,7 +75,6 @@ function DropIcon(props: Props) {
     })()
 
     return (
-
         <Dropdown.Button menu={{ items }}>
             <Input style={{ minWidth: '4em' }} bordered={false} disabled={true} key={imgs[index]?.reveals[key]} defaultValue={icons.find(icon => icon['val'] == imgs[index]?.reveals[key])?.name || uploadIcons.find(icon => icon['value'] == imgs[index]?.reveals[key])?.name || '错误'} />
         </Dropdown.Button>

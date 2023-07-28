@@ -28,6 +28,8 @@ export interface ImgModel {
     LongitudeRef: string | undefined
     LensModel:    string | undefined
     LensMake:     string | undefined
+    parm?:         string | undefined
+    locate?:       string | undefined
   },
   exif: IExif,
 }
@@ -50,14 +52,16 @@ const imgService = createSlice({
   initialState: initialImg,
   reducers: {
     addImg(state, action: PayloadAction<ImgModel>) {
+      action.payload.exifr.locate = `${action.payload.exifr.Latitude.length > 0 ? Math.round(action.payload.exifr.Latitude[0]) + '°' + Math.round(action.payload.exifr.Latitude[1]) + "'" + Math.round(action.payload.exifr.Latitude[2]) + '"' + action.payload.exifr.LatitudeRef + ' ' + Math.round(action.payload.exifr.Longitude[0]) + '°' + Math.round(action.payload.exifr.Longitude[1]) + "'" + Math.round(action.payload.exifr.Longitude[2]) + '"' + action.payload.exifr.LongitudeRef : ''}`
+      action.payload.exifr.parm = `${action.payload.exifr.Focal && action.payload.exifr.Focal + 'mm'} ${action.payload.exifr.Fnumber && 'f/' + action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso && 'ISO' + action.payload.exifr.Iso}`
       state.push({...action.payload, ...{
         reveals: {
           icon: icons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || icons[0].val,
           filter: void 0,
           h1: action.payload.exifr.Model,
-          h2: `${action.payload.exifr.Focal && action.payload.exifr.Focal + 'mm'} ${action.payload.exifr.Fnumber && 'f/' + action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso && 'ISO' + action.payload.exifr.Iso}`,
+          h2: action.payload.exifr.parm,
           h3: action.payload.exifr.Time,
-          h4: `${action.payload.exifr.Latitude.length > 0 ? Math.round(action.payload.exifr.Latitude[0]) + '°' + Math.round(action.payload.exifr.Latitude[1]) + "'" + Math.round(action.payload.exifr.Latitude[2]) + '"' + action.payload.exifr.LatitudeRef + ' ' + Math.round(action.payload.exifr.Longitude[0]) + '°' + Math.round(action.payload.exifr.Longitude[1]) + "'" + Math.round(action.payload.exifr.Longitude[2]) + '"' + action.payload.exifr.LongitudeRef : ''}`,
+          h4: action.payload.exifr.locate,
         }
       }});
     },
@@ -106,11 +110,11 @@ const revealService = createSlice({
 
 export const { upReveals, removeReveals } = revealService.actions;
 
-const iconsReveals: [{name: string,value: string}] = JSON.parse(localStorage.getItem('icons') || '[]')
+const initialIcons: [{name: string,value: string}] = JSON.parse(localStorage.getItem('icons') || '[]')
 
 const iconService = createSlice({
   name: "icons",
-  initialState: iconsReveals,
+  initialState: initialIcons,
   reducers: {
     upIcons(state, action: PayloadAction<{name: string, value: string}>) {
       const { name, value } = action.payload
@@ -130,11 +134,11 @@ const iconService = createSlice({
 export const { upIcons, removeIcons } = iconService.actions;
 
 
-const filterReveals: [{name: string,value: string}] = JSON.parse(localStorage.getItem('filter') || '[]')
+const initialFilter: [{name: string,value: string}] = JSON.parse(localStorage.getItem('filter') || '[]')
 
 const filterService = createSlice({
   name: "filter",
-  initialState: filterReveals,
+  initialState: initialFilter,
   reducers: {
     upFilter(state, action: PayloadAction<{name: string, value: string}>) {
       const { name, value } = action.payload
@@ -153,13 +157,28 @@ const filterService = createSlice({
 
 export const { upFilter, removeFilter } = filterService.actions;
 
+
+const initialMake = false
+const makeService = createSlice({
+  name: "make",
+  initialState: initialMake,
+  reducers: {
+    upMake(_state, action: PayloadAction<boolean>) {
+      return action.payload
+    },
+  }
+})
+export const { upMake } = makeService.actions;
+
+
 export const store = configureStore({
     reducer:{
         imgs: imgService.reducer,
         index: indexService.reducer,
         reveals: revealService.reducer,
         icons: iconService.reducer,
-        filter: filterService.reducer
+        filter: filterService.reducer,
+        make: makeService.reducer,
     }
 })
 

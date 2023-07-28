@@ -51,12 +51,12 @@ svg, canvas{
 .ant-layout-footer{
     padding: 3% 1%;
     width: 100%;
-    overflow: auto;
+    overflow-x: auto;
     display: flex;
     /* justify-content: center; */
 }
 
-.ant-layout-footer>div{
+.ant-layout-footer .ant-space{
     display: flex;
     /* width: 100%; */
     max-width: 1080px;

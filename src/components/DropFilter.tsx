@@ -6,16 +6,16 @@ import type { UploadProps } from 'antd';
 import { imgBlobToBase64 } from "../export/image";
 
 interface Props {
-    index: number
     name: keyof RImgModel['reveals']
 }
 function DropFilter(props: Props) {
-    const { index, name: key } = props
+    const { name: key } = props
     const imgs = useSelector((state: RootState) => state.imgs)
+    const index = useSelector((state: RootState) => state.index)
     const uploadFilter = useSelector((state: RootState) => state.filter)
     const dispath = useAppDispatch()
 
-    
+
 
     const UploadProps: UploadProps = {
         beforeUpload: async file => {
@@ -65,7 +65,7 @@ function DropFilter(props: Props) {
             key: 'Reveals',
             label: '自定义滤镜',
             type: 'divider',
-            children: uploadFilter.map((filter,_index) => {
+            children: uploadFilter.map((filter, _index) => {
                 return {
                     key: filter['name'],
                     label: <a style={{ color: filter['value'] === imgs[index]?.reveals[key] ? 'red' : 'inherit' }} onClick={e => {
@@ -87,9 +87,8 @@ function DropFilter(props: Props) {
     })()
 
     return (
-
         <Dropdown.Button menu={{ items }}>
-            <Input style={{ minWidth: '6em'}} bordered={false} disabled={key === 'icon' || key === 'filter' ? true : false} key={imgs[index]?.reveals[key]} defaultValue={filters.find(filter => filter['val'] == imgs[index]?.reveals[key])?.name || uploadFilter.find(filter => filter['value'] == imgs[index]?.reveals[key])?.name || '无滤镜'} />
+            <Input style={{ minWidth: '6em' }} bordered={false} disabled={key === 'icon' || key === 'filter' ? true : false} key={imgs[index]?.reveals[key]} defaultValue={filters.find(filter => filter['val'] == imgs[index]?.reveals[key])?.name || uploadFilter.find(filter => filter['value'] == imgs[index]?.reveals[key])?.name || '无滤镜'} />
         </Dropdown.Button>
     )
 }
