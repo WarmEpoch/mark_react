@@ -48,7 +48,7 @@ function DropFilter(props: Props) {
             key: 'Default',
             label: '默认参数',
             type: uploadFilter.length ? 'divider' : 'group',
-            children: filters.filter(filter => filter.val !== imgs[index]?.reveals[key]).map(filter => {
+            children: filters.map(filter => {
                 return {
                     key: filter['name'],
                     label: <a onClick={e => {
@@ -58,7 +58,8 @@ function DropFilter(props: Props) {
                             key,
                             value: filter['val']
                         }))
-                    }}>{filter['name']}</a>
+                    }}>{filter['name']}</a>,
+                    disabled: filter['val'] === imgs[index]?.reveals[key]
                 }
             })
         }, ...(uploadFilter.length && [{

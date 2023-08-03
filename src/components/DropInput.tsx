@@ -29,7 +29,7 @@ function DropInput(props: Props) {
             label: '默认参数',
             type: 'group',
             children: Object.entries(imgs[index]?.exifr || []).filter(val => {
-                return val[1] === imgs[index]?.reveals[key] || Array.isArray(val[1]) ? false : Boolean(val[1])
+                return Array.isArray(val[1]) ? false : Boolean(val[1])
             }).map(item => {
                 return {
                     key: item[0],
@@ -40,7 +40,8 @@ function DropInput(props: Props) {
                             key,
                             value: item[1]?.toString()
                         }))
-                    }}>{item[1]}</a>
+                    }}>{item[1]}</a>,
+                    disabled: item[1] === imgs[index]?.reveals[key]
                 }
             })
         }, ...(reveals.length && [{
@@ -57,7 +58,8 @@ function DropInput(props: Props) {
                             key,
                             value: reveal[1]
                         }))
-                    }}>{reveal[1]}</a>
+                    }}>{reveal[1]}</a>,
+                    disabled: reveal[1] === imgs[index]?.reveals[key]
                 }
             })
         }] || [])]
@@ -71,6 +73,11 @@ function DropInput(props: Props) {
         const _index = reveals.findIndex(reveal => reveal === target.value)
         if (_index >= 0) {
             dispath(removeReveals(index))
+            dispath(upReveal({
+                index,
+                key,
+                value: void 0
+            }))
         } else if (tipShow && target.value.trim() !== '') {
             dispath(upReveal({
                 index,

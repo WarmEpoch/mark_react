@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef, ReactNode } from "react"
 import html2canvas from 'html2canvas';
-import { imgBlobToBase64, imageDom, imageDomToSize, imageResize, imgBase64ToBlob } from "../export/image";
+import { imgBlobToBase64, imageDom, imageDomToSize, imageResize } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
-import { RImgModel, RootState, upDraw, useAppDispatch } from "../export/store"
+import { RImgModel, RootState } from "../export/store"
 import { htmlCanvastoBlob, offScreenCanvastoBlob } from '../export/cavnvas'
 import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
@@ -14,6 +14,7 @@ interface Props {
     border?: number
 }
 
+
 function Draw(props: Props) {
     const { children, img, border = 0 } = props
     const make = useSelector((state: RootState) => state.make)
@@ -21,11 +22,11 @@ function Draw(props: Props) {
     const divStyleWidth = img.width > img.height ? (img.width + border * img.width / 100 * 2) * (img.scale / 100) : (img.height + border * img.height / 100 * 2) * (img.scale / 100)
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
-    const dispath = useAppDispatch()
-    useEffect(() => {
-        dispath(upDraw({id: img.id, value: makeImg}))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[makeImg])
+    // const dispath = useAppDispatch()
+    // useEffect(() => {
+    //     dispath(upDraw({id: img.id, value: makeImg}))
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // },[makeImg])
 
     useEffect(() => {
         setTimeout(async () => {
@@ -69,7 +70,8 @@ function Draw(props: Props) {
             if (make) {
                 const blobBase64 = await imgBlobToBase64(blob)
                 const base64Exif = imgBase64ToExif(img.exif, blobBase64)
-                setMakeImg(imgBase64ToBlob(base64Exif))
+                // setMakeImg(imgBase64ToBlob(base64Exif))
+                setMakeImg(base64Exif)
             } else {
                 setMakeImg(URL.createObjectURL(blob))
             }
@@ -77,7 +79,7 @@ function Draw(props: Props) {
             setShow(true)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [border, make, img.reveals])
+    }, [make, img.reveals])
 
     useUnmount(() => {
         URL.revokeObjectURL(makeImg)

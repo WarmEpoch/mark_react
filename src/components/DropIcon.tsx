@@ -37,7 +37,7 @@ function DropIcon(props: Props) {
             key: 'Default',
             label: '默认参数',
             type: uploadIcons.length ? 'divider' : 'group',
-            children: icons.filter(icon => icon.val !== imgs[index]?.reveals[key]).map(icon => {
+            children: icons.map(icon => {
                 return {
                     key: icon['name'],
                     label: <a onClick={e => {
@@ -47,7 +47,8 @@ function DropIcon(props: Props) {
                             key,
                             value: icon['val']
                         }))
-                    }}>{icon['name']}</a>
+                    }}>{icon['name']}</a>,
+                    disabled: icon['val'] === imgs[index]?.reveals[key]
                 }
             })
         }, ...(uploadIcons.length && [{

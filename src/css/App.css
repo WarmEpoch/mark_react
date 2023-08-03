@@ -46,14 +46,14 @@ svg, canvas{
     align-items: center;
     justify-content: space-between;
     background: rgb(255, 255, 255);
+    height: unset;
 }
 
 .ant-layout-footer{
-    padding: 3% 1%;
+    padding: 2%;
     width: 100%;
     overflow-x: auto;
     display: flex;
-    /* justify-content: center; */
 }
 
 .ant-layout-footer .ant-space{
@@ -92,6 +92,12 @@ svg, canvas{
     line-height: unset;
     display: none;
 }
+
+/* .html2canvas-container{
+    position: unset!important;
+    visibility: unset!important;
+} */
+
 .mark.show{
     display: block;
 }

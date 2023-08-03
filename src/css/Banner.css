@@ -10,6 +10,7 @@
 .slick-slide>div{
   position: absolute;
   inset: 0;
+  overflow: auto;
 }
 
 .slick-slide img{

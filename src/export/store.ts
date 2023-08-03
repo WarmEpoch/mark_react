@@ -54,7 +54,7 @@ const imgService = createSlice({
   reducers: {
     addImg(state, action: PayloadAction<ImgModel>) {
       action.payload.exifr.locate = `${action.payload.exifr.Latitude.length > 0 ? Math.round(action.payload.exifr.Latitude[0]) + '°' + Math.round(action.payload.exifr.Latitude[1]) + "'" + Math.round(action.payload.exifr.Latitude[2]) + '"' + action.payload.exifr.LatitudeRef + ' ' + Math.round(action.payload.exifr.Longitude[0]) + '°' + Math.round(action.payload.exifr.Longitude[1]) + "'" + Math.round(action.payload.exifr.Longitude[2]) + '"' + action.payload.exifr.LongitudeRef : ''}`
-      action.payload.exifr.parm = `${action.payload.exifr.Focal && action.payload.exifr.Focal + 'mm'} ${action.payload.exifr.Fnumber && 'f/' + action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso && 'ISO' + action.payload.exifr.Iso}`
+      action.payload.exifr.parm = `${action.payload.exifr.Focal && `${action.payload.exifr.Focal}mm`} ${action.payload.exifr.Fnumber && `f/${action.payload.exifr.Fnumber}`} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso && `ISO${action.payload.exifr.Iso}`}`
       state.push({...action.payload, ...{
         reveals: {
           icon: icons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || icons[0].val,
@@ -78,10 +78,15 @@ const imgService = createSlice({
       const _index = state.findIndex(img => img.id == id)
       state[_index]['draw'] = value
     },
+    upScale(state: RImgModel[], action: PayloadAction<{id: RImgModel['id'], value: number}>){
+      const { id, value } = action.payload;
+      const _index = state.findIndex(img => img.id == id)
+      state[_index]['scale'] = value
+    },
   },
 });
 
-export const { addImg, removeImg, upReveal, upDraw } = imgService.actions;
+export const { addImg, removeImg, upReveal, upDraw, upScale } = imgService.actions;
 
 const initialIndex = 0
 
@@ -174,8 +179,8 @@ const makeService = createSlice({
     },
   }
 })
-export const { upMake } = makeService.actions;
 
+export const { upMake } = makeService.actions;
 
 export const store = configureStore({
     reducer:{

@@ -22,7 +22,7 @@ const IconFont = createFromIconfontCN({
 })
 
 const useCanvasMaxSize = () => {
-  const [canvasMaxSize,setCanvasMaxSize] = useState({
+  const [canvasMaxSize, setCanvasMaxSize] = useState({
     width: 1080,
     height: 1080
   })
@@ -30,25 +30,33 @@ const useCanvasMaxSize = () => {
     canvasSize.maxArea({
       usePromise: true,
       useWorker: true,
-    }).then(({width,height}) => setCanvasMaxSize({
+    }).then(({ width, height }) => setCanvasMaxSize({
       width,
       height
     }))
-  },[])
+  }, [])
   return canvasMaxSize
 }
 
 const useRoutesItem = (id: string) => {
-  const [routesItem,setRoutesItem] = useState<typeof routesItems>()
+  const [routesItem, setRoutesItem] = useState<typeof routesItems>()
   useEffect(() => {
     setRoutesItem(routesItems.filter(i => i.key !== id))
-  },[id])
+  }, [id])
   return routesItem
 }
 
 
+const plusReady = (() => {
+  try{
+    return !!plus
+  }catch{
+    return false
+  }
+})()
+
 function App() {
-  
+
   const { width: canvasMaxWidth, height: canvasMaxHeight } = useCanvasMaxSize()
 
   const { pathname: id } = useLocation()
@@ -73,19 +81,18 @@ function App() {
     const S = (Date.getSeconds() + '').padStart(2, '0');
     return `${Y}.${M}.${D} ${H}:${Mi}:${S}`
   }
-
-  // const uploads: Set<number> = new Set()
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const UploadProps: UploadProps = {
     beforeUpload: async (file) => {
-      
+
       setLoading(true)
       const id = file.lastModified + file.size
-      // if(uploads.has(id)){
-      //   messageApi.warning('该图片已上传')
-      //   return false;
-      // }
-      // uploads.add(id)
+      const _index = imgs.findIndex(img => img.id == id)
+      if (_index >= 0) {
+        messageApi.warning('该图片已上传')
+        setLoading(false)
+        return false;
+      }
       const output = await parse(file).catch(() => false)
       if (!output) {
         messageApi.warning('图像不规范')
@@ -97,7 +104,7 @@ function App() {
         toType: "image/jpeg",
         quality: 1,
       }).then(res => res as Blob).catch(() => file)
-      
+
       const fileBase64 = await imgBlobToBase64(blob)
 
       const heic: string = URL.createObjectURL(blob)
@@ -107,10 +114,10 @@ function App() {
       const { width: urlWidth, height: urlHeight } = await imageDomSize(heic)
 
       const isValidCanvas = canvasSize.test({
-        width : urlWidth,
+        width: urlWidth,
         height: urlHeight
       })
-      
+
       const canvaScale = isValidCanvas ? 100 : Math.floor(urlWidth > urlHeight ? canvasMaxWidth / urlWidth * 100 : canvasMaxHeight / urlHeight * 100)
 
 
@@ -152,22 +159,23 @@ function App() {
 
   const make = useSelector((state: RootState) => state.make)
   const imgs = useSelector((state: RootState) => state.imgs)
+  
 
   return (
     <>
       {contextHolder}
-      <Header>
-        <IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />
-        <Dropdown menu={{ items: routesItem }} placement="bottom" trigger={['click']}>
+      <Header style={{ paddingTop: plusReady ? plus.navigator.getStatusbarHeight() : '0'}}>
+        <Button type='link' style={{width: 'unset'}} href='/' icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} / >
+        <Dropdown menu={{ items: routesItem }} placement="bottom" trigger={['click']} disabled={make}>
           <Button>{GetElementName(id)}<DownOutlined /></Button>
         </Dropdown>
         <Space>
           <Upload {...UploadProps}>
-            <Spin spinning={ loading }>
+            <Spin spinning={loading}>
               <Button type="dashed" disabled={make}>选择</Button>
             </Spin>
           </Upload>
-          <Button type="primary" onClick={() => dispath(upMake())} disabled={ loading || imgs.length <= 0 }>{make ? '编辑' : '导出'}</Button>
+          <Button type="primary" onClick={() => dispath(upMake())} disabled={loading || imgs.length <= 0}>{make ? '编辑' : '导出'}</Button>
         </Space>
       </Header>
       <Suspense>
