@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { ReactNode, useEffect, useState } from "react";
 import DropFilter from "./DropFilter";
 import { useMount } from "ahooks";
+import { fetchTime } from "../export/fetch";
 
 const { Footer: Footer_Antd } = Layout;
 interface Props {
@@ -104,7 +105,7 @@ function Footer(props: Props) {
     }
 
     const checking = async (only: string, tips = true) => {
-        const time = await fetch(`//api.immers.icu/api/Mark/time?only=${only}`).then(res => res.text())
+        const time = await fetchTime(only)
         if (Date.now() < +time * 1000) {
             if (tips) {
                 messageApi.open({
@@ -121,26 +122,29 @@ function Footer(props: Props) {
                 content: time === '0' ? '身份码输入错误！' : '身份码已过期！',
                 type: time === '0' ? 'error' : 'info'
             })
-            time !== '0' && localStorage.removeItem('only')
+            localStorage.removeItem('only')
         }
     }
 
     useMount(() => {
-        const only = localStorage.getItem('only')
-        only && checking(only, false)
+        alone && checking(alone, false)
     })
 
-    const [check,setCheck] = useState(false)
+    const [check, setCheck] = useState(false)
     const [only, setOnly] = useState('身份码')
     const [onlyB, setOnlyB] = useState(false)
     useEffect(() => {
+        Promise.resolve().then(async () => {
+            if (only.length <= 0) {
+                setCheck(false)
+                localStorage.removeItem('only')
+            }
+        })
         if (onlyB || check) return
         Promise.resolve().then(async () => {
             if (only.length >= 6) {
                 setOnlyB(true)
                 await checking(only)
-                setOnly('')
-                setAlone('')
                 setOnlyB(false)
             }
         })
@@ -150,7 +154,7 @@ function Footer(props: Props) {
 
     return (
         <>
-            {(imgs.length > 0 && !make && check) ?
+            {!make && ((imgs.length > 0 && check) ?
                 <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }}>
                     <Space>
                         <Button size="large" onClick={() => dispath(removeImg(index))} danger icon={<DeleteOutlined />} />
@@ -160,8 +164,7 @@ function Footer(props: Props) {
                         <DropFilter name="filter" />
                         {children}
                     </Space>
-                </Footer_Antd>
-                :
+                </Footer_Antd> :
                 <Footer_Antd>
                     <Space split={<Divider type="vertical" />}>
                         <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">帮助中心</Button>
@@ -172,7 +175,7 @@ function Footer(props: Props) {
                             setAlone(e.target.value)
                         }} onBlur={() => setOnly('身份码')} onFocus={() => setOnly(alone)} />
                     </Space>
-                </Footer_Antd>
+                </Footer_Antd>)
             }
             {notificationHolder}
             {messageHolder}

@@ -91,6 +91,7 @@ svg, canvas{
     left: 100%;
     line-height: unset;
     display: none;
+    overflow: auto;
 }
 
 /* .html2canvas-container{

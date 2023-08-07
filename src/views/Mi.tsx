@@ -5,7 +5,11 @@ import Draw from '../components/Draw'
 import DropInput from "../components/DropInput";
 import DropIcon from "../components/DropIcon";
 import Footer from "../components/Footer";
+import { createFromIconfontCN } from "@ant-design/icons";
 
+const IconFont = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
+})
 
 function Mi() {
   const imgs = useSelector((state: RootState) => state.imgs)

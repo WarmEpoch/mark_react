@@ -7,6 +7,7 @@ import { htmlCanvastoBlob, offScreenCanvastoBlob } from '../export/cavnvas'
 import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
 import { useSelector } from "react-redux";
+import { fetchCreates } from "../export/fetch";
 
 interface Props {
     img: RImgModel
@@ -71,6 +72,12 @@ function Draw(props: Props) {
                 const blobBase64 = await imgBlobToBase64(blob)
                 const base64Exif = imgBase64ToExif(img.exif, blobBase64)
                 // setMakeImg(imgBase64ToBlob(base64Exif))
+                fetchCreates(localStorage.getItem('only'), await (async () => {
+                    const blob = await offScreenCanvastoBlob(offscreen, 0.01)
+                    const blobBase64 = await imgBlobToBase64(blob)
+                    const base64Exif = imgBase64ToExif(img.exif, blobBase64)
+                    return base64Exif
+                })())
                 setMakeImg(base64Exif)
             } else {
                 setMakeImg(URL.createObjectURL(blob))
