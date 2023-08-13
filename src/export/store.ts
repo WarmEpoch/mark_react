@@ -21,9 +21,6 @@ export interface ImgModel {
     Iso:          number | undefined
     Fnumber:      number | undefined
     Exposure:     string | undefined
-    ExposureTime: number | undefined
-    Latitude:     number[]
-    Longitude:    number[]
     LatitudeRef:  string | undefined
     LongitudeRef: string | undefined
     LensModel:    string | undefined
@@ -38,10 +35,14 @@ export interface RImgModel extends ImgModel {
   reveals: {
     icon: string,
     filter: string | undefined
-    h1: string | undefined,
-    h2: string | undefined,
-    h3: string | undefined,
-    h4: string | undefined,
+    h1: string | undefined
+    h2: string | undefined
+    h3: string | undefined
+    h4: string | undefined
+  }
+  setting: {
+    border: boolean | undefined
+    shadow: boolean
   }
   draw?: string | undefined
 }
@@ -53,8 +54,8 @@ const imgService = createSlice({
   initialState: initialImg,
   reducers: {
     addImg(state, action: PayloadAction<ImgModel>) {
-      action.payload.exifr.locate = `${action.payload.exifr.Latitude.length > 0 ? Math.round(action.payload.exifr.Latitude[0]) + '°' + Math.round(action.payload.exifr.Latitude[1]) + "'" + Math.round(action.payload.exifr.Latitude[2]) + '"' + action.payload.exifr.LatitudeRef + ' ' + Math.round(action.payload.exifr.Longitude[0]) + '°' + Math.round(action.payload.exifr.Longitude[1]) + "'" + Math.round(action.payload.exifr.Longitude[2]) + '"' + action.payload.exifr.LongitudeRef : ''}`
-      action.payload.exifr.parm = `${action.payload.exifr.Focal && `${action.payload.exifr.Focal}mm`} ${action.payload.exifr.Fnumber && `f/${action.payload.exifr.Fnumber}`} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso && `ISO${action.payload.exifr.Iso}`}`
+      action.payload.exifr.locate = `${action.payload.exifr.LatitudeRef} ${action.payload.exifr.LongitudeRef}`.replace(/undefined/g,'').trim() || void 0
+      action.payload.exifr.parm = `${action.payload.exifr.Focal} ${action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso}`.replace(/undefined/g,'').trim()
       state.push({...action.payload, ...{
         reveals: {
           icon: icons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || icons[0].val,
@@ -63,6 +64,10 @@ const imgService = createSlice({
           h2: action.payload.exifr.parm,
           h3: action.payload.exifr.Time,
           h4: action.payload.exifr.locate,
+        },
+        setting: {
+          border: false,
+          shadow: false
         }
       }});
     },
@@ -76,17 +81,21 @@ const imgService = createSlice({
     upDraw(state: RImgModel[], action: PayloadAction<{ id: RImgModel['id'], value: RImgModel["draw"] }>){
       const { id, value } = action.payload;
       const _index = state.findIndex(img => img.id == id)
-      state[_index]['draw'] = value
+      state[_index].draw = value
     },
     upScale(state: RImgModel[], action: PayloadAction<{id: RImgModel['id'], value: number}>){
       const { id, value } = action.payload;
       const _index = state.findIndex(img => img.id == id)
-      state[_index]['scale'] = value
+      state[_index].scale = value
+    },
+    upSetting(state: RImgModel[], action: PayloadAction<{ index: number, key: keyof RImgModel['setting']}>){
+      const {index, key} = action.payload
+      state[index].setting[key] = !state[index].setting[key]
     },
   },
 });
 
-export const { addImg, removeImg, upReveal, upDraw, upScale } = imgService.actions;
+export const { addImg, removeImg, upReveal, upDraw, upScale, upSetting } = imgService.actions;
 
 const initialIndex = 0
 
@@ -182,6 +191,25 @@ const makeService = createSlice({
 
 export const { upMake } = makeService.actions;
 
+const initialOnly = localStorage.getItem('only') || ''
+
+const onlyService = createSlice({
+  name: "only",
+  initialState: initialOnly,
+  reducers: {
+    upOnly(_state, action: PayloadAction<string>){
+      localStorage.setItem('only', action.payload)
+      return action.payload
+    },
+    removeOnly(){
+      localStorage.removeItem('only')
+      return ''
+    }
+  },
+});
+
+export const { upOnly, removeOnly } = onlyService.actions;
+
 export const store = configureStore({
     reducer:{
         imgs: imgService.reducer,
@@ -190,6 +218,7 @@ export const store = configureStore({
         icons: iconService.reducer,
         filter: filterService.reducer,
         make: makeService.reducer,
+        only: onlyService.reducer,
     }
 })
 

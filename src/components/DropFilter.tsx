@@ -1,4 +1,4 @@
-import { Dropdown, Input, MenuProps, Upload } from "antd"
+import { Dropdown, Input, MenuProps, Upload, message } from "antd"
 import { useSelector } from "react-redux"
 import { RootState, RImgModel, upReveal, useAppDispatch, removeFilter, upFilter } from "../export/store";
 import filters from "../export/filters";
@@ -14,14 +14,20 @@ function DropFilter(props: Props) {
     const index = useSelector((state: RootState) => state.index)
     const uploadFilter = useSelector((state: RootState) => state.filter)
     const dispath = useAppDispatch()
-
-
+    const [messageApi, contextHolder] = message.useMessage();
 
     const UploadProps: UploadProps = {
         beforeUpload: async file => {
+            const name = file.name.split('.')[0]
+            const value = await imgBlobToBase64(file)
+            const _index = uploadFilter.findIndex(filter => filter.name == name || filter.value == value)
+            if (_index >= 0) {
+              messageApi.warning('该滤镜已上传')
+              return false;
+            }
             dispath(upFilter({
-                name: file.name.split('.')[0],
-                value: await imgBlobToBase64(file)
+                name,
+                value
             }))
             return false
         },
@@ -46,7 +52,7 @@ function DropFilter(props: Props) {
             label: <Upload {...UploadProps}>上传</Upload>
         }, {
             key: 'Default',
-            label: '默认参数',
+            label: '默认滤镜',
             type: uploadFilter.length ? 'divider' : 'group',
             children: filters.map(filter => {
                 return {
@@ -88,9 +94,12 @@ function DropFilter(props: Props) {
     })()
 
     return (
-        <Dropdown.Button menu={{ items }}>
-            <Input style={{ minWidth: '6em' }} bordered={false} disabled={key === 'icon' || key === 'filter' ? true : false} key={imgs[index]?.reveals[key]} defaultValue={filters.find(filter => filter['val'] == imgs[index]?.reveals[key])?.name || uploadFilter.find(filter => filter['value'] == imgs[index]?.reveals[key])?.name || '无滤镜'} />
-        </Dropdown.Button>
+        <>
+            <Dropdown.Button menu={{ items }}>
+                <Input style={{ minWidth: '6em' }} bordered={false} disabled={key === 'icon' || key === 'filter' ? true : false} key={imgs[index]?.reveals[key] as string} defaultValue={filters.find(filter => filter['val'] == imgs[index]?.reveals[key])?.name || uploadFilter.find(filter => filter['value'] == imgs[index]?.reveals[key])?.name || '无滤镜'} />
+            </Dropdown.Button>
+            {contextHolder}
+        </>
     )
 }
 

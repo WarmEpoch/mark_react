@@ -99,6 +99,7 @@ function App() {
         setLoading(false)
         return false
       }
+      console.log(output)
       const blob: Blob = await heic2any({
         blob: file,
         toType: "image/jpeg",
@@ -120,7 +121,7 @@ function App() {
 
       const canvaScale = isValidCanvas ? 100 : Math.floor(urlWidth > urlHeight ? canvasMaxWidth / urlWidth * 100 : canvasMaxHeight / urlHeight * 100)
 
-
+      
       dispath(addImg({
         id: id,
         name: file.name.split('.')[0],
@@ -133,21 +134,19 @@ function App() {
         exifr: {
           Make: output?.Make || void 0,
           Model: output?.Model || 'Immers Mark',
-          Focal: output?.FocalLengthIn35mmFormat || output?.FocalLength || void 0,
+          Focal: (output?.FocalLengthIn35mmFormat && `${output?.FocalLengthIn35mmFormat}mm`) || (output?.FocalLength && `${output?.FocalLength}mm`) || void 0,
           Time: output?.DateTimeOriginal ? formaTime(output.DateTimeOriginal) : void 0,
-          Iso: output?.ISO || void 0,
-          Fnumber: output?.FNumber || void 0,
+          Iso: (output?.ISO && `ISO${output?.ISO}`) || void 0,
+          Fnumber: (output?.FNumber &&  `f/${output?.FNumber}`) || void 0,
           Exposure: output?.ExposureTime >= 1 ? `${output.ExposureTime}"` : output?.ExposureTime && `1/${Math.round(1 / output.ExposureTime)}` || void 0,
-          ExposureTime: output?.ExposureTime || void 0,
-          Latitude: output?.GPSLatitude || [],
-          Longitude: output?.GPSLongitude || [],
-          LatitudeRef: output?.GPSLatitudeRef || void 0,
-          LongitudeRef: output?.GPSLongitudeRef || void 0,
+          LatitudeRef: output?.GPSLatitude?.length >= 3 ? `${Math.round(output?.GPSLatitude[0])}°${Math.round(output?.GPSLatitude[1])}'${Math.round(output?.GPSLatitude[2])}"${output?.GPSLatitudeRef}` : void 0,
+          LongitudeRef: output?.GPSLongitude?.length >= 3 ? `${Math.round(output?.GPSLongitude[0])}°${Math.round(output?.GPSLongitude[1])}'${Math.round(output?.GPSLongitude[2])}"${output?.GPSLongitudeRef}` : void 0,
           LensModel: output?.LensModel || void 0,
           LensMake: output?.LensMake || void 0,
         },
         exif: imgBase64LoadExif(fileBase64),
       }))
+      
       setLoading(false)
 
       return false

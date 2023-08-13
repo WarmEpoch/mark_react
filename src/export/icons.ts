@@ -34,6 +34,7 @@ const defaultIcons = [
     {
         name: '尼康',
         val: 'nikon',
+        describe: "NIKON CORPORATION"
     },
     {
         name: '宾得',
@@ -46,6 +47,10 @@ const defaultIcons = [
     {
         name: '大疆',
         val: 'dji',
+    },
+    {
+        name: '金尼康',
+        val: 'nikons',
     },
     {
         name: '奥林巴斯',
@@ -76,7 +81,7 @@ const defaultIcons = [
 const icons = defaultIcons.map(icon => {
     return {
         name: icon['name'],
-        describe: icon['val'],
+        describe: (icon['describe'] || icon['val']).toLocaleLowerCase(),
         val: `//web.immers.icu/assets/icon/${icon['val']}.svg`,
     }
 })

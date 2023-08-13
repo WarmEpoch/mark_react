@@ -1,12 +1,13 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Divider, Dropdown, Input, Layout, Space, message, notification } from "antd";
-import type { MenuProps } from 'antd';
-import { RootState, removeImg, upScale, useAppDispatch } from "../export/store";
+import { Button, Divider, Dropdown, Input, Layout, Popover, Space, message, notification, Image } from "antd";
+import type { InputRef, MenuProps } from 'antd';
+import { RootState, removeImg, removeOnly, upOnly, upScale, useAppDispatch } from "../export/store";
 import { useSelector } from "react-redux";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import DropFilter from "./DropFilter";
 import { useMount } from "ahooks";
 import { fetchTime } from "../export/fetch";
+import DropSwitch from "./DropSwitch";
 
 const { Footer: Footer_Antd } = Layout;
 interface Props {
@@ -27,33 +28,26 @@ function Footer(props: Props) {
     const index = useSelector((state: RootState) => state.index)
     const imgs = useSelector((state: RootState) => state.imgs)
     const make = useSelector((state: RootState) => state.make)
+    const only = useSelector((state: RootState) => state.only)
     const [notificationApi, notificationHolder] = notification.useNotification();
     const [messageApi, messageHolder] = message.useMessage();
     useEffect(() => {
         if (make) {
             notificationApi.open({
                 message: '导出图片',
-                description: '长按保存至相册，有误请更换浏览器。',
+                description: '右键或长按进行保存，有误请更换浏览器。',
                 placement: 'bottomRight',
                 closeIcon: false,
                 duration: null,
                 key: 'export',
                 btn: (plusReady &&
                     <Space>
-                        <Button type="primary" onClick={() => {
-                            // plus.gallery.save('https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE4wEaH', e => {
-                            //     console.log(e)
-                            // }, e => {
-                            //     console.log(e)
-                            // })
-                        }
-                        }>
-                            下载当前
-                        </Button>
+                        
                     </Space>
                 )
             })
         } else {
+            imgs.forEach(img => URL.revokeObjectURL(img.draw as string))
             notificationApi.destroy()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,6 +99,14 @@ function Footer(props: Props) {
     }
 
     const checking = async (only: string, tips = true) => {
+        if (tips) {
+            messageApi.open({
+                key: 'only',
+                content: '身份验证中！',
+                type: 'loading',
+                duration: 0
+            })
+        }
         const time = await fetchTime(only)
         if (Date.now() < +time * 1000) {
             if (tips) {
@@ -114,43 +116,45 @@ function Footer(props: Props) {
                     type: 'success'
                 })
             }
-            localStorage.setItem('only', only)
+            dispath(upOnly(only))
             setCheck(true)
+            return true
         } else {
             messageApi.open({
                 key: 'only',
                 content: time === '0' ? '身份码输入错误！' : '身份码已过期！',
                 type: time === '0' ? 'error' : 'info'
             })
-            localStorage.removeItem('only')
+            dispath(removeOnly())
+            return false
         }
     }
 
     useMount(() => {
-        alone && checking(alone, false)
+        alone && checking(alone, false).then(res => !res && setAlone(''))
     })
 
     const [check, setCheck] = useState(false)
-    const [only, setOnly] = useState('身份码')
-    const [onlyB, setOnlyB] = useState(false)
+    const [sing, setSing] = useState('自定义')
+    const [singB, setSingB] = useState(false)
     useEffect(() => {
+        if (sing.length <= 0) {
+            setCheck(false)
+            dispath(removeOnly())
+        }
+        if (singB || check) return
         Promise.resolve().then(async () => {
-            if (only.length <= 0) {
-                setCheck(false)
-                localStorage.removeItem('only')
-            }
-        })
-        if (onlyB || check) return
-        Promise.resolve().then(async () => {
-            if (only.length >= 6) {
-                setOnlyB(true)
-                await checking(only)
-                setOnlyB(false)
+            if (sing.length >= 6) {
+                setSingB(true)
+                await checking(sing)
+                setSingB(false)
             }
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [only])
-    const [alone, setAlone] = useState(localStorage.getItem('only') || '')
+    }, [sing])
+    const [alone, setAlone] = useState(only)
+    const [pop, setPop] = useState(false)
+    const singRef = useRef<InputRef>(null);
 
     return (
         <>
@@ -161,19 +165,32 @@ function Footer(props: Props) {
                         <Dropdown menu={{ items: scaleItems(imgs[index]?.maxScale, imgs[index]?.scale) }}>
                             <Button size="large">{GetScaleName(imgs[index]?.scale)}</Button>
                         </Dropdown>
+                        <DropSwitch name="border" />
+                        <DropSwitch name="shadow" />
                         <DropFilter name="filter" />
                         {children}
                     </Space>
                 </Footer_Antd> :
                 <Footer_Antd>
                     <Space split={<Divider type="vertical" />}>
-                        <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">帮助中心</Button>
+                        <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">沐享教程</Button>
+                        <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
                         <Button type="text" target="_blank" size='small' href="//www.immers.icu/#call">联系我们</Button>
                         <Button type="text" target="_blank" size='small' href="//www.immers.icu/#quick">快捷指令</Button>
-                        <Input style={{ width: '4.4em' }} size='small' placeholder="身份码" maxLength={6} bordered={false} value={only} onChange={e => {
-                            setOnly(e.target.value)
-                            setAlone(e.target.value)
-                        }} onBlur={() => setOnly('身份码')} onFocus={() => setOnly(alone)} />
+                        <Popover open={pop} title="💴：3天/2元 7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
+                            <Image src="https://shp.qpic.cn/collector/1523230910/3522ceeb-3d8f-484b-b86b-5d83c033c4dc/0" width={320} preview={false} />
+                        }>
+                            <Input ref={singRef} style={{ width: '4.4em' }} enterKeyHint="done" size='small' placeholder="身份码" maxLength={6} bordered={false} value={sing} onChange={e => {
+                                setSing(e.target.value)
+                                setAlone(e.target.value)
+                            }} onBlur={() => {
+                                setSing('自定义')
+                                setPop(false)    
+                            }} onFocus={() => {
+                                setPop(true)
+                                setSing(alone)
+                            }} onPressEnter={() => singRef.current?.blur()} />
+                        </Popover>
                     </Space>
                 </Footer_Antd>)
             }

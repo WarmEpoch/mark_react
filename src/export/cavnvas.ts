@@ -9,3 +9,10 @@ export const htmlCanvastoBase = (canvas: HTMLCanvasElement, quality = 1, type = 
 export const offScreenCanvastoBlob = (canvas: OffscreenCanvas, quality = 1, type = 'image/jpeg'): Promise<Blob> => {
     return new Promise((resolve) => canvas.convertToBlob({ type, quality }).then(blob => resolve(blob)))
 }
+
+export const createCanvas = (width: number, height: number) => {
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    return canvas
+}

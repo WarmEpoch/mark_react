@@ -17,15 +17,15 @@ export const imageDomSize = async (url: string): Promise<{width: number,height: 
     return imageDomToSize(await imageDom(url))
 }
 
-import { offScreenCanvastoBlob } from './cavnvas'
+import { createCanvas, htmlCanvastoBlob } from './cavnvas'
 
 export const imageResize = async (blobUrl: string, width: number, quality = 1, type = 'image/jpeg') => {
     const img = await imageDom(blobUrl)
     const { width: imgWidth, height: imgHeight } = imageDomToSize(img)
-    const canvas = new OffscreenCanvas(width, (width / imgWidth * imgHeight))
-    const context = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D
+    const canvas = createCanvas(width, width / imgWidth * imgHeight)
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D
     context.drawImage(img, 0, 0, canvas.width, canvas.height)
-    const blob = await offScreenCanvastoBlob(canvas, quality, type)
+    const blob = await htmlCanvastoBlob(canvas, quality, type)
     return URL.createObjectURL(blob)
 }
 
@@ -39,7 +39,7 @@ export const imgBlobToBase64 = (blob: Blob): Promise<string> => {
     })
 }
 
-export const imgBase64ToBlob = (base64Image: string): string => {
+export const imgBase64ToBlob = (base64Image: string): Blob => {
     // Split into two parts
     const parts = base64Image.split(';base64,');
   
@@ -59,5 +59,5 @@ export const imgBase64ToBlob = (base64Image: string): string => {
   
     // Return BLOB image after conversion
     const blob = new Blob([uInt8Array], { type: imageType });
-    return URL.createObjectURL(blob);
+    return blob;
   }

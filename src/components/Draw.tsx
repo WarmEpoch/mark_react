@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef, ReactNode } from "react"
 import html2canvas from 'html2canvas';
-import { imgBlobToBase64, imageDom, imageDomToSize, imageResize } from "../export/image";
+import { imgBlobToBase64, imageDom, imageDomToSize, imageResize, imgBase64ToBlob } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
 import { RImgModel, RootState } from "../export/store"
-import { htmlCanvastoBlob, offScreenCanvastoBlob } from '../export/cavnvas'
+import { htmlCanvastoBlob, createCanvas } from '../export/cavnvas'
 import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
 import { useSelector } from "react-redux";
@@ -15,19 +15,28 @@ interface Props {
     border?: number
 }
 
+const isPC = (() => {
+    const u = navigator.userAgent;
+    const Agents = ["Android", "iPhone", "webOS", "BlackBerry", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+    let flag = true;
+    for (let i = 0; i < Agents.length; i++) {
+        if (u.indexOf(Agents[i]) > 0) {
+        flag = false;
+        break;
+        }
+    }
+    return flag;
+})()
+
 
 function Draw(props: Props) {
     const { children, img, border = 0 } = props
     const make = useSelector((state: RootState) => state.make)
+    const only = useSelector((state: RootState) => state.only)
     const div = useRef<HTMLDivElement>(null)
     const divStyleWidth = img.width > img.height ? (img.width + border * img.width / 100 * 2) * (img.scale / 100) : (img.height + border * img.height / 100 * 2) * (img.scale / 100)
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
-    // const dispath = useAppDispatch()
-    // useEffect(() => {
-    //     dispath(upDraw({id: img.id, value: makeImg}))
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // },[makeImg])
 
     useEffect(() => {
         setTimeout(async () => {
@@ -36,7 +45,7 @@ function Draw(props: Props) {
             const divUrl = await html2canvas(div.current as HTMLDivElement, {
                 useCORS: true,
                 scale: 1,
-                backgroundColor: void 0,
+                backgroundColor: null,
             }).then(async dom => {
                 div.current?.classList.remove("show")
                 const blob = await htmlCanvastoBlob(dom, void 0, "image/png")
@@ -47,38 +56,63 @@ function Draw(props: Props) {
             const imgDom = make && img.scale < 100 ? await imageDom(await imageResize(src, img.width * img.scale / 100)) : await imageDom(src)
             const { width: divWidth, height: divHeight } = imageDomToSize(divDom)
             const { width: srcWidth, height: srcHeight } = imageDomToSize(imgDom)
-            const borders = img.width > img.height ? border * srcWidth / 100 : border * srcHeight / 100
+            const borders = (() => {
+                if(only){
+                    if(img.setting.border){
+                        return img.width > img.height ? (border || 3) * srcWidth / 100 : (border || 3) * srcHeight / 100
+                    }else{
+                        return 0
+                    }
+                }
+                if(border){
+                    return img.width > img.height ? border * srcWidth / 100 : border * srcHeight / 100
+                }
+                return 0
+            })()
             const canvasWidth = srcWidth + borders * 2
             const divDrawHeight = canvasWidth / divWidth * divHeight
             const canvasHeight = srcHeight + divDrawHeight + borders
-            const offscreen = new OffscreenCanvas(canvasWidth, canvasHeight);
-            const context = offscreen.getContext('2d', {
+            const canvas = createCanvas(canvasWidth, canvasHeight)
+            const context = canvas.getContext('2d', {
                 willReadFrequency: true,
-            }) as OffscreenCanvasRenderingContext2D
+            }) as CanvasRenderingContext2D
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvasWidth, canvasHeight);
+            if(img.setting.shadow){
+                context.shadowColor = 'rgba(0,0,0,0.1)'
+                const n = srcWidth > srcHeight ? srcHeight * 0.02 : srcWidth * 0.02
+                context.shadowBlur = n;
+                context.shadowOffsetX = n;
+                context.shadowOffsetY = n;
+                context.fillStyle = "rgba(0,0,0,0)";
+                context.fillRect(borders, borders, srcWidth, srcHeight);
+            }
             context.drawImage(imgDom, borders, borders, srcWidth, srcHeight)
             if (img.reveals.filter) {
-                const filterData = await CanvasAddfilter(img.reveals.filter, context.getImageData(0, 0, canvasWidth, canvasHeight))
-                context.putImageData(filterData, 0, 0)
+                const filterData = await CanvasAddfilter(img.reveals.filter, context.getImageData(borders, borders, srcWidth, srcHeight))
+                context.putImageData(filterData, borders, borders)
             }
-            context.fillStyle = "#ffffff";
-            context.fillRect(0, 0, borders, canvasHeight);
-            context.fillRect(0, 0, canvasWidth, borders);
-            context.fillRect(canvasWidth - borders, 0, borders, canvasHeight);
-            context.fillRect(0, canvasHeight + borders, canvasWidth, divDrawHeight);
             context.drawImage(divDom, 0, srcHeight + borders, canvasWidth, divDrawHeight)
-            const blob = await offScreenCanvastoBlob(offscreen)
+            const blob = await htmlCanvastoBlob(canvas)
             URL.revokeObjectURL(makeImg)
             if (make) {
                 const blobBase64 = await imgBlobToBase64(blob)
                 const base64Exif = imgBase64ToExif(img.exif, blobBase64)
-                // setMakeImg(imgBase64ToBlob(base64Exif))
-                fetchCreates(localStorage.getItem('only'), await (async () => {
-                    const blob = await offScreenCanvastoBlob(offscreen, 0.01)
+                fetchCreates(only, await (async () => {
+                    const blob = await htmlCanvastoBlob(canvas, 0.01)
                     const blobBase64 = await imgBlobToBase64(blob)
                     const base64Exif = imgBase64ToExif(img.exif, blobBase64)
                     return base64Exif
                 })())
                 setMakeImg(base64Exif)
+                if(isPC){
+                    const blobUrl = URL.createObjectURL(imgBase64ToBlob(base64Exif))
+                    const a = document.createElement('a')
+                    a.href = blobUrl
+                    a.download = `${img.name}.jpg`
+                    a.click()
+                    URL.revokeObjectURL(blobUrl)
+                }
             } else {
                 setMakeImg(URL.createObjectURL(blob))
             }
@@ -86,7 +120,7 @@ function Draw(props: Props) {
             setShow(true)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [make, img.reveals])
+    }, [make, img.reveals, img.setting, only])
 
     useUnmount(() => {
         URL.revokeObjectURL(makeImg)
