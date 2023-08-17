@@ -14,14 +14,6 @@ interface Props {
     children: ReactNode
 }
 
-const plusReady = (() => {
-    try {
-        return !!plus
-    } catch {
-        return false
-    }
-})()
-
 function Footer(props: Props) {
     const { children } = props
     const dispath = useAppDispatch()
@@ -40,11 +32,6 @@ function Footer(props: Props) {
                 closeIcon: false,
                 duration: null,
                 key: 'export',
-                btn: (plusReady &&
-                    <Space>
-                        
-                    </Space>
-                )
             })
         } else {
             imgs.forEach(img => URL.revokeObjectURL(img.draw as string))

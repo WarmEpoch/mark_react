@@ -46,20 +46,19 @@ const useRoutesItem = (id: string) => {
   return routesItem
 }
 
-
-const plusReady = (() => {
-  try{
-    return !!plus
-  }catch{
-    return false
-  }
-})()
-
 function App() {
 
   const { width: canvasMaxWidth, height: canvasMaxHeight } = useCanvasMaxSize()
 
   const { pathname: id } = useLocation()
+
+  const plusReady = (() => {
+      try {
+          return !!plus
+      } catch {
+          return false
+      }
+  })()
 
   const routesItem = useRoutesItem(id)
 
@@ -99,7 +98,6 @@ function App() {
         setLoading(false)
         return false
       }
-      console.log(output)
       const blob: Blob = await heic2any({
         blob: file,
         toType: "image/jpeg",

@@ -28,6 +28,13 @@ const isPC = (() => {
     return flag;
 })()
 
+const isSafari = (() => {
+    if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+        return true
+    }
+    return false
+})()
+
 
 function Draw(props: Props) {
     const { children, img, border = 0 } = props
@@ -37,9 +44,16 @@ function Draw(props: Props) {
     const divStyleWidth = img.width > img.height ? (img.width + border * img.width / 100 * 2) * (img.scale / 100) : (img.height + border * img.height / 100 * 2) * (img.scale / 100)
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
+    const plusReady = (() => {
+        try {
+            return !!plus
+        } catch {
+            return false
+        }
+    })()
 
     useEffect(() => {
-        setTimeout(async () => {
+        Promise.resolve().then(async () => {
             setShow(false)
             div.current?.classList.add("show")
             const divUrl = await html2canvas(div.current as HTMLDivElement, {
@@ -105,7 +119,30 @@ function Draw(props: Props) {
                     return base64Exif
                 })())
                 setMakeImg(base64Exif)
-                if(isPC){
+                if(plusReady){
+                    const basePath = '_downloads'
+                    plus.io.resolveLocalFileSystemURL(basePath, (directory) => {
+                        const name = `${img.name}.jpg`
+                        directory.getFile(name, {
+                            create: true,
+                            exclusive: false,
+                        }, (entry) => {
+                            entry.createWriter((writer) => {
+                                writer.onwrite = () => {
+                                    plus.gallery.save(`${basePath}/${name}`, () => {
+                                        plus.nativeUI.toast("图片已保存到相册")
+                                        directory.getFile(name, {}, (file) => {
+                                            file.remove()
+                                        })
+                                    })
+                                }
+                                writer.seek(0)
+                                writer.writeAsBinary(base64Exif.split(';base64,')[1])
+                            })
+                        })
+                    })
+                }
+                if(isPC || isSafari){
                     const blobUrl = URL.createObjectURL(imgBase64ToBlob(base64Exif))
                     const a = document.createElement('a')
                     a.href = blobUrl

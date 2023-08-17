@@ -61,3 +61,5 @@ export const imgBase64ToBlob = (base64Image: string): Blob => {
     const blob = new Blob([uInt8Array], { type: imageType });
     return blob;
   }
+
+  
