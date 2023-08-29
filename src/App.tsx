@@ -68,7 +68,7 @@ function App() {
 
   const GetElementName = (id: string | undefined) => {
     const index = routesItems.findIndex(item => item.key === id)
-    return routesItems[index]['name']
+    return routesItems[index]?.name || '敬请期待'
   }
 
   const formaTime = (Date: Date) => {

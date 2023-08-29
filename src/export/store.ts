@@ -16,10 +16,10 @@ export interface ImgModel {
   exifr: {
     Make:         string | undefined
     Model:        string | undefined
-    Focal:        number | undefined
+    Focal:        string | undefined
     Time:         string | undefined
     Iso:          number | undefined
-    Fnumber:      number | undefined
+    Fnumber:      string | undefined
     Exposure:     string | undefined
     LatitudeRef:  string | undefined
     LongitudeRef: string | undefined
@@ -39,6 +39,10 @@ export interface RImgModel extends ImgModel {
     h2: string | undefined
     h3: string | undefined
     h4: string | undefined
+    iso: number | undefined
+    exposure: string | undefined
+    focal: string | undefined
+    fnumber: string | undefined
   }
   setting: {
     border: boolean | undefined
@@ -64,6 +68,10 @@ const imgService = createSlice({
           h2: action.payload.exifr.parm,
           h3: action.payload.exifr.Time,
           h4: action.payload.exifr.locate,
+          iso: action.payload.exifr.Iso,
+          exposure: action.payload.exifr.Exposure,
+          focal: action.payload.exifr.Focal,
+          fnumber: action.payload.exifr.Fnumber,
         },
         setting: {
           border: false,

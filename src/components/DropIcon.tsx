@@ -43,7 +43,7 @@ function DropIcon(props: Props) {
         }, {
             key: 'Default',
             label: '默认标志',
-            type: uploadIcons.length ? 'divider' : 'group',
+            type: 'divider',
             children: icons.map(icon => {
                 return {
                     key: icon['name'],

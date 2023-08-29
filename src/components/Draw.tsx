@@ -28,14 +28,6 @@ const isPC = (() => {
     return flag;
 })()
 
-const isSafari = (() => {
-    if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
-        return true
-    }
-    return false
-})()
-
-
 function Draw(props: Props) {
     const { children, img, border = 0 } = props
     const make = useSelector((state: RootState) => state.make)
@@ -141,8 +133,7 @@ function Draw(props: Props) {
                             })
                         })
                     })
-                }
-                if(isPC || isSafari){
+                }else if(isPC){
                     const blobUrl = URL.createObjectURL(imgBase64ToBlob(base64Exif))
                     const a = document.createElement('a')
                     a.href = blobUrl

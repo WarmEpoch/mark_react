@@ -142,7 +142,6 @@ function Footer(props: Props) {
     const [alone, setAlone] = useState(only)
     const [pop, setPop] = useState(false)
     const singRef = useRef<InputRef>(null);
-
     return (
         <>
             {!make && ((imgs.length > 0 && check) ?
@@ -164,7 +163,7 @@ function Footer(props: Props) {
                         <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
                         <Button type="text" target="_blank" size='small' href="//www.immers.icu/#call">联系我们</Button>
                         <Button type="text" target="_blank" size='small' href="//www.immers.icu/#quick">快捷指令</Button>
-                        <Popover open={pop} title="💴：3天/2元 7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
+                        <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
                             <Image src="https://shp.qpic.cn/collector/1523230910/3522ceeb-3d8f-484b-b86b-5d83c033c4dc/0" width={320} preview={false} />
                         }>
                             <Input ref={singRef} style={{ width: '4.4em' }} enterKeyHint="done" size='small' placeholder="身份码" maxLength={6} bordered={false} value={sing} onChange={e => {

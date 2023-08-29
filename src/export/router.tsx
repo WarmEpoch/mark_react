@@ -23,6 +23,9 @@ const routesNames = [
   }, {
     path: '/centre',
     name: '中心拍摄',
+  }, {
+    path: '/morn',
+    name: '杨晨风格',
   }
 ]
 
