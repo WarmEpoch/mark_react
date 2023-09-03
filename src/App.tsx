@@ -16,6 +16,7 @@ import { imageDomSize, imageResize, imgBlobToBase64 } from './export/image';
 import canvasSize from 'canvas-size';
 import { imgBase64LoadExif } from './export/piexif';
 import { useSelector } from 'react-redux';
+import { plusReady } from './export/state';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
@@ -51,14 +52,6 @@ function App() {
   const { width: canvasMaxWidth, height: canvasMaxHeight } = useCanvasMaxSize()
 
   const { pathname: id } = useLocation()
-
-  const plusReady = (() => {
-      try {
-          return !!plus
-      } catch {
-          return false
-      }
-  })()
 
   const routesItem = useRoutesItem(id)
 

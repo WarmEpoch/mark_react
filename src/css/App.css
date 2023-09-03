@@ -57,11 +57,11 @@ svg, canvas{
 }
 
 .ant-layout-footer .ant-space{
-    display: flex;
+    /* display: flex; */
     /* width: 100%; */
-    max-width: 1080px;
+    /* max-width: 1080px; */
     margin: auto;
-    justify-content: space-between;
+    /* justify-content: space-between; */
 }
 
 .ant-layout-footer::-webkit-scrollbar{

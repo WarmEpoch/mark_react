@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, ReactNode } from "react"
 import html2canvas from 'html2canvas';
-import { imgBlobToBase64, imageDom, imageDomToSize, imageResize, imgBase64ToBlob } from "../export/image";
+import { imgBlobToBase64, imageDom, imageDomToSize, imageResize, imgBase64ToBlob, imgBase64Save } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
 import { RImgModel, RootState } from "../export/store"
 import { htmlCanvastoBlob, createCanvas } from '../export/cavnvas'
@@ -8,6 +8,7 @@ import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
 import { useSelector } from "react-redux";
 import { fetchCreates } from "../export/fetch";
+import { isPC, plusReady } from "../export/state";
 
 interface Props {
     img: RImgModel
@@ -15,18 +16,7 @@ interface Props {
     border?: number
 }
 
-const isPC = (() => {
-    const u = navigator.userAgent;
-    const Agents = ["Android", "iPhone", "webOS", "BlackBerry", "SymbianOS", "Windows Phone", "iPad", "iPod"];
-    let flag = true;
-    for (let i = 0; i < Agents.length; i++) {
-        if (u.indexOf(Agents[i]) > 0) {
-        flag = false;
-        break;
-        }
-    }
-    return flag;
-})()
+
 
 function Draw(props: Props) {
     const { children, img, border = 0 } = props
@@ -36,13 +26,6 @@ function Draw(props: Props) {
     const divStyleWidth = img.width > img.height ? (img.width + border * img.width / 100 * 2) * (img.scale / 100) : (img.height + border * img.height / 100 * 2) * (img.scale / 100)
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
-    const plusReady = (() => {
-        try {
-            return !!plus
-        } catch {
-            return false
-        }
-    })()
 
     useEffect(() => {
         Promise.resolve().then(async () => {
@@ -112,27 +95,7 @@ function Draw(props: Props) {
                 })())
                 setMakeImg(base64Exif)
                 if(plusReady){
-                    const basePath = '_downloads'
-                    plus.io.resolveLocalFileSystemURL(basePath, (directory) => {
-                        const name = `${img.name}.jpg`
-                        directory.getFile(name, {
-                            create: true,
-                            exclusive: false,
-                        }, (entry) => {
-                            entry.createWriter((writer) => {
-                                writer.onwrite = () => {
-                                    plus.gallery.save(`${basePath}/${name}`, () => {
-                                        plus.nativeUI.toast("图片已保存到相册")
-                                        directory.getFile(name, {}, (file) => {
-                                            file.remove()
-                                        })
-                                    })
-                                }
-                                writer.seek(0)
-                                writer.writeAsBinary(base64Exif.split(';base64,')[1])
-                            })
-                        })
-                    })
+                    await imgBase64Save(base64Exif, `${img.name}.jpg`) && plus.nativeUI.toast("图片已保存到相册")
                 }else if(isPC){
                     const blobUrl = URL.createObjectURL(imgBase64ToBlob(base64Exif))
                     const a = document.createElement('a')

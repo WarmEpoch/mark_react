@@ -40,9 +40,10 @@ function Morn() {
           imgs.map(img =>
             <Draw key={img.id} img={img} border={4}>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexFlow: 'column' }}>
-                <div style={{ display: 'flex', position: 'relative' }}>
-                  <p style={{ fontWeight: 'bold', fontSize: img.width > img.height ? '1em' : '.9em', lineHeight: img.width > img.height ? '3.8em' : '3em' }}>{ img.reveals.h1 }</p>
-                  <img src={img.reveals.icon} style={{ borderLeft: `solid .1em #ccc`, height: 'calc(100% - 1.3em)', position: 'absolute', top: '.9em', right: '0', padding: '0 .5em', boxSizing: 'border-box', transform: 'translateX(calc(100% + .5em))' }} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <p style={{ fontWeight: 'bold', lineHeight: img.width > img.height ? '3.8em' : '3em' }}>{ img.reveals.h1 }</p>
+                  <div style={{ width: '.1em', height: img.width > img.height ? '2em' : '1.6em', backgroundColor: '#ccc', margin: '0 .5em', marginTop: '.5em' }}></div>
+                  <img src={img.reveals.icon} style={{ boxSizing: 'border-box', height: img.width > img.height ? '3.4em' : '2.6em', marginTop: '.5em' }} />
                 </div>
                 <div style={{ display: 'flex', gap: '1em', padding: '1em 0 2em 0'}}>
                   <Style name="S" value={img.reveals.exposure} />
