@@ -26,6 +26,9 @@ const routesNames = [
   }, {
     path: '/morn',
     name: '杨晨风格',
+  }, {
+    path: '/xmage',
+    name: '华为影像',
   }
 ]
 

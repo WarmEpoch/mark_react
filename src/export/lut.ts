@@ -1,9 +1,9 @@
 import { createCanvas } from "./cavnvas";
-import { imageDom, imageDomToSize } from "./image";
+import { imageDom } from "./image";
 
 export const CanvasAddfilter = async (lutSrc: string, canvasData: ImageData) => {
     const lutDom = await imageDom(lutSrc)
-    const { width: lutWidth, height: lutHeight } = imageDomToSize(lutDom)
+    const { width: lutWidth, height: lutHeight } = lutDom
     const canvas = createCanvas(lutWidth, lutHeight)
     const context = canvas.getContext('2d') as CanvasRenderingContext2D
     context.drawImage(lutDom, 0, 0);

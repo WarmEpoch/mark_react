@@ -6,22 +6,19 @@ export const imageDom = (url: string): Promise<HTMLImageElement> => {
     })
 }
 
-export const imageDomToSize = (img: HTMLImageElement): {width: number,height: number} => {
-    return {
-        width: img.width,
-        height: img.height,
-    }
-}
-
 export const imageDomSize = async (url: string): Promise<{width: number,height: number}> => {
-    return imageDomToSize(await imageDom(url))
+    const dom = await imageDom(url)
+    return {
+        width: dom.width,
+        height: dom.height
+    }
 }
 
 import { createCanvas, htmlCanvastoBlob } from './cavnvas'
 
 export const imageResize = async (blobUrl: string, width: number, quality = 1, type = 'image/jpeg') => {
     const img = await imageDom(blobUrl)
-    const { width: imgWidth, height: imgHeight } = imageDomToSize(img)
+    const { width: imgWidth, height: imgHeight } = img
     const canvas = createCanvas(width, width / imgWidth * imgHeight)
     const context = canvas.getContext('2d') as CanvasRenderingContext2D
     context.drawImage(img, 0, 0, canvas.width, canvas.height)

@@ -1,4 +1,4 @@
-import { Button, } from "antd"
+import { Button, Popover, Slider } from "antd"
 import { useSelector } from "react-redux"
 import { RootState, RImgModel, useAppDispatch, upSetting } from "../export/store";
 import { ReactElement } from "react";
@@ -30,12 +30,17 @@ function DropSwitch(props: Props) {
     }
 
     return (
-        <Button size="large" icon={imgs[index].setting[key] ? Icon[key]['success'] : Icon[key]['error']} onClick={() => {
-            dispath(upSetting({
-                index,
-                key
-            }))
-        }} />
+        <Popover content={
+            <Slider defaultValue={imgs[index].setting[key]} max={10} onAfterChange={value => {
+                dispath(upSetting({
+                    index,
+                    key,
+                    value
+                }))
+            }} />
+        } title>
+            <Button size="large" icon={imgs[index].setting[key] > 0 ? Icon[key]['success'] : Icon[key]['error']} />
+        </Popover>
     )
 }
 

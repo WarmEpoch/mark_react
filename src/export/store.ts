@@ -2,7 +2,7 @@ import { configureStore, PayloadAction } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { createSlice } from "@reduxjs/toolkit";
 import { IExif } from "piexifjs";
-import icons from "./icons";
+import { defaultIcons, cameraIcons} from "./icons";
 
 export interface ImgModel {
   id: number
@@ -33,20 +33,12 @@ export interface ImgModel {
 
 export interface RImgModel extends ImgModel {
   reveals: {
-    icon: string,
+    icon: string
     filter: string | undefined
-    h1: string | undefined
-    h2: string | undefined
-    h3: string | undefined
-    h4: string | undefined
-    iso: number | undefined
-    exposure: string | undefined
-    focal: string | undefined
-    fnumber: string | undefined
-  }
+  } & ImgModel['exifr']
   setting: {
-    border: boolean | undefined
-    shadow: boolean
+    border: number
+    shadow: number
   }
   draw?: string | undefined
 }
@@ -62,20 +54,13 @@ const imgService = createSlice({
       action.payload.exifr.parm = `${action.payload.exifr.Focal} ${action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso}`.replace(/undefined/g,'').trim()
       state.push({...action.payload, ...{
         reveals: {
-          icon: icons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || icons[0].val,
+          ...action.payload.exifr,
+          icon: defaultIcons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || cameraIcons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || cameraIcons[0].val,
           filter: void 0,
-          h1: action.payload.exifr.Model,
-          h2: action.payload.exifr.parm,
-          h3: action.payload.exifr.Time,
-          h4: action.payload.exifr.locate,
-          iso: action.payload.exifr.Iso,
-          exposure: action.payload.exifr.Exposure,
-          focal: action.payload.exifr.Focal,
-          fnumber: action.payload.exifr.Fnumber,
         },
         setting: {
-          border: false,
-          shadow: false
+          border: 0,
+          shadow: 0
         }
       }});
     },
@@ -96,9 +81,9 @@ const imgService = createSlice({
       const _index = state.findIndex(img => img.id == id)
       state[_index].scale = value
     },
-    upSetting(state: RImgModel[], action: PayloadAction<{ index: number, key: keyof RImgModel['setting']}>){
-      const {index, key} = action.payload
-      state[index].setting[key] = !state[index].setting[key]
+    upSetting(state: RImgModel[], action: PayloadAction<{ index: number, key: keyof RImgModel['setting'], value: number}>){
+      const {index, key, value} = action.payload
+      state[index].setting[key] = value
     },
   },
 });

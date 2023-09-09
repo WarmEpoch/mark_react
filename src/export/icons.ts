@@ -1,8 +1,24 @@
-const defaultIcons = [
+interface Icons {
+    name: string
+    val: string
+    describe?: string
+}
+const _defaultIcons: Icons[] = [
     {
         name: '沐享',
         val: 'logo',
     },
+    {
+        name: '大疆',
+        val: 'dji',
+    },
+    {
+        name: 'FotorGear',
+        val: 'fotorgear',
+    },
+]
+
+const _cameraIcons: Icons[] = [
     {
         name: '徕卡',
         val: 'leica',
@@ -45,10 +61,6 @@ const defaultIcons = [
         val: 'apple',
     },
     {
-        name: '大疆',
-        val: 'dji',
-    },
-    {
         name: '金尼康',
         val: 'nikons',
     },
@@ -72,13 +84,9 @@ const defaultIcons = [
         name: 'TAMRON',
         val: 'tamron',
     },
-    {
-        name: 'FotorGear',
-        val: 'fotorgear',
-    },
 ]
 
-const icons = defaultIcons.map(icon => {
+const Icons = (icons: Icons[]) => icons.map(icon => {
     return {
         name: icon['name'],
         describe: (icon['describe'] || icon['val']).toLocaleLowerCase(),
@@ -86,4 +94,5 @@ const icons = defaultIcons.map(icon => {
     }
 })
 
-export default icons
+export const defaultIcons = Icons(_defaultIcons)
+export const cameraIcons = Icons(_cameraIcons)

@@ -13,14 +13,14 @@ function Frame() {
           imgs.map(img =>
             <Draw key={img.id} img={img}>
               <div style={{ boxSizing: 'border-box', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '1em 2em' }}>
-                <p style={{ fontWeight: 'bold', fontSize: img.width > img.height ? '.98em' : '.9em', lineHeight: img.width > img.height ? '2.2em' : '1.9em' }}>{img.reveals.h1}</p>
+                <p style={{ fontWeight: 'bold', fontSize: img.width > img.height ? '.98em' : '.9em', lineHeight: img.width > img.height ? '2.2em' : '1.9em' }}>{img.reveals.Model}</p>
               </div>
             </Draw>
           )
         }
       </Banner>
       <Footer>
-        <DropInput name="h1" />
+        <DropInput name="Model" />
       </Footer>
     </>
   )

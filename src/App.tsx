@@ -112,7 +112,6 @@ function App() {
 
       const canvaScale = isValidCanvas ? 100 : Math.floor(urlWidth > urlHeight ? canvasMaxWidth / urlWidth * 100 : canvasMaxHeight / urlHeight * 100)
 
-      
       dispath(addImg({
         id: id,
         name: file.name.split('.')[0],

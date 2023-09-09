@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, ReactNode } from "react"
 import html2canvas from 'html2canvas';
-import { imgBlobToBase64, imageDom, imageDomToSize, imageResize, imgBase64ToBlob, imgBase64Save } from "../export/image";
+import { imgBlobToBase64, imageDom, imageResize, imgBase64ToBlob, imgBase64Save } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
 import { RImgModel, RootState } from "../export/store"
 import { htmlCanvastoBlob, createCanvas } from '../export/cavnvas'
@@ -17,13 +17,13 @@ interface Props {
 }
 
 
-
 function Draw(props: Props) {
     const { children, img, border = 0 } = props
     const make = useSelector((state: RootState) => state.make)
     const only = useSelector((state: RootState) => state.only)
     const div = useRef<HTMLDivElement>(null)
-    const divStyleWidth = img.width > img.height ? (img.width + border * img.width / 100 * 2) * (img.scale / 100) : (img.height + border * img.height / 100 * 2) * (img.scale / 100)
+    const widthOrHeight = img.width > img.height ? img.width : img.height
+    const divStyleWidth = widthOrHeight + border * widthOrHeight / 100 * 2
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
 
@@ -42,19 +42,20 @@ function Draw(props: Props) {
             })
             const divDom = await imageDom(divUrl)
             const src = make ? img.url : img.src
-            const imgDom = make && img.scale < 100 ? await imageDom(await imageResize(src, img.width * img.scale / 100)) : await imageDom(src)
-            const { width: divWidth, height: divHeight } = imageDomToSize(divDom)
-            const { width: srcWidth, height: srcHeight } = imageDomToSize(imgDom)
+            const imgDom = make && img.scale < 100 ? await imageDom(await imageResize(src, img.width * (img.scale / 100) - (img.width * img.setting.border / 100))) : await imageDom(src)
+            const { width: divWidth, height: divHeight } = divDom
+            const { width: srcWidth, height: srcHeight } = imgDom
             const borders = (() => {
+                const widthOrHeight = img.width > img.height ? srcWidth : srcHeight
                 if(only){
                     if(img.setting.border){
-                        return img.width > img.height ? (border || 3) * srcWidth / 100 : (border || 3) * srcHeight / 100
+                        return widthOrHeight * img.setting.border / 100
                     }else{
                         return 0
                     }
                 }
                 if(border){
-                    return img.width > img.height ? border * srcWidth / 100 : border * srcHeight / 100
+                    return widthOrHeight * border / 100
                 }
                 return 0
             })()
@@ -67,16 +68,15 @@ function Draw(props: Props) {
             }) as CanvasRenderingContext2D
             context.fillStyle = "#ffffff";
             context.fillRect(0, 0, canvasWidth, canvasHeight);
-            if(img.setting.shadow){
-                context.shadowColor = 'rgba(0,0,0,0.1)'
-                const n = srcWidth > srcHeight ? srcHeight * 0.02 : srcWidth * 0.02
-                context.shadowBlur = n;
-                context.shadowOffsetX = n;
-                context.shadowOffsetY = n;
-                context.fillStyle = "rgba(0,0,0,0)";
-                context.fillRect(borders, borders, srcWidth, srcHeight);
+            if(img.setting.shadow > 0){
+                context.shadowColor = 'rgba(0,0,0,0.4)'
+                const widthOrHeight = srcWidth > srcHeight ? srcHeight : srcWidth
+                context.shadowBlur = widthOrHeight * img.setting.shadow / 100;
+                context.shadowOffsetX = widthOrHeight * 0.03;
+                context.shadowOffsetY = context.shadowOffsetX;
             }
             context.drawImage(imgDom, borders, borders, srcWidth, srcHeight)
+            context.shadowColor = 'rgba(0,0,0,0)'
             if (img.reveals.filter) {
                 const filterData = await CanvasAddfilter(img.reveals.filter, context.getImageData(borders, borders, srcWidth, srcHeight))
                 context.putImageData(filterData, borders, borders)
