@@ -127,7 +127,7 @@ function App() {
           Focal: (output?.FocalLengthIn35mmFormat && `${output?.FocalLengthIn35mmFormat}mm`) || (output?.FocalLength && `${output?.FocalLength}mm`) || void 0,
           Time: output?.DateTimeOriginal ? formaTime(output.DateTimeOriginal) : void 0,
           Iso: (output?.ISO && `ISO${output?.ISO}`) || void 0,
-          Fnumber: (output?.FNumber &&  `f/${output?.FNumber}`) || void 0,
+          Fnumber: (output?.FNumber && `f/${output?.FNumber}`) || void 0,
           Exposure: output?.ExposureTime >= 1 ? `${output.ExposureTime}"` : output?.ExposureTime && `1/${Math.round(1 / output.ExposureTime)}` || void 0,
           LatitudeRef: output?.GPSLatitude?.length >= 3 ? `${Math.round(output?.GPSLatitude[0])}°${Math.round(output?.GPSLatitude[1])}'${Math.round(output?.GPSLatitude[2])}"${output?.GPSLatitudeRef}` : void 0,
           LongitudeRef: output?.GPSLongitude?.length >= 3 ? `${Math.round(output?.GPSLongitude[0])}°${Math.round(output?.GPSLongitude[1])}'${Math.round(output?.GPSLongitude[2])}"${output?.GPSLongitudeRef}` : void 0,

@@ -13,5 +13,10 @@ export const imgBase64ToExif = (exifr: piexif.IExif, jpegData: string) => {
 }
 
 export const imgBase64LoadExif = (jpegData: string) => {
-    return piexif.load(jpegData)
+    try {
+        return piexif.load(jpegData)
+    } catch (error) {
+        console.log(error)
+        return void 0
+    }
 }

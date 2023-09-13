@@ -28,7 +28,7 @@ export interface ImgModel {
     parm?:         string | undefined
     locate?:       string | undefined
   },
-  exif: IExif,
+  exif: IExif | undefined,
 }
 
 export interface RImgModel extends ImgModel {
