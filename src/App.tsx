@@ -16,7 +16,7 @@ import { imageDomSize, imageResize, imgBlobToBase64 } from './export/image';
 import canvasSize from 'canvas-size';
 import { imgBase64LoadExif } from './export/piexif';
 import { useSelector } from 'react-redux';
-import { plusReady } from './export/state';
+import { usePlusReady } from './export/state';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
@@ -57,6 +57,8 @@ function App() {
 
   const dispath = useAppDispatch()
 
+  const plusReady = usePlusReady()
+  
   const [messageApi, contextHolder] = message.useMessage();
 
   const GetElementName = (id: string | undefined) => {

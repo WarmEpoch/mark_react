@@ -8,7 +8,7 @@ import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
 import { useSelector } from "react-redux";
 import { fetchCreates } from "../export/fetch";
-import { isPC, plusReady } from "../export/state";
+import { isPC, usePlusReady } from "../export/state";
 
 interface Props {
     img: RImgModel
@@ -26,6 +26,7 @@ function Draw(props: Props) {
     const divStyleWidth = widthOrHeight + border * widthOrHeight / 100 * 2
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
+    const plusReady = usePlusReady()
 
     useEffect(() => {
         Promise.resolve().then(async () => {

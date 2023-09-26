@@ -8,6 +8,7 @@ import DropFilter from "./DropFilter";
 import { useMount } from "ahooks";
 import { fetchTime } from "../export/fetch";
 import DropSwitch from "./DropSwitch";
+import { usePlusReady } from "../export/state";
 
 const { Footer: Footer_Antd } = Layout;
 interface Props {
@@ -23,11 +24,12 @@ function Footer(props: Props) {
     const only = useSelector((state: RootState) => state.only)
     const [notificationApi, notificationHolder] = notification.useNotification();
     const [messageApi, messageHolder] = message.useMessage();
+    const plusReady = usePlusReady()
     useEffect(() => {
         if (make) {
             notificationApi.open({
                 message: '导出图片',
-                description: '右键或长按进行保存，有误请更换浏览器。',
+                description: plusReady ? 'App会自动为您保存到相册！' : '右键或长按进行保存，有误请更换浏览器。',
                 placement: 'bottomRight',
                 closeIcon: false,
                 duration: null,

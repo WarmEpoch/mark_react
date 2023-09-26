@@ -1,6 +1,6 @@
 import * as piexif from 'piexifjs'
 
-export const imgBase64ToExif = (exifr: piexif.IExif, jpegData: string) => {
+export const imgBase64ToExif = (exifr: piexif.IExif | undefined, jpegData: string) => {
     try{
         const _exifr: piexif.IExif = JSON.parse(JSON.stringify(exifr))
         _exifr['0th'] && (_exifr['0th'][piexif.TagValues.ImageIFD.Software] = 'Immers Mark')

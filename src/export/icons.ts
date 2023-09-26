@@ -16,6 +16,10 @@ const _defaultIcons: Icons[] = [
         name: 'FotorGear',
         val: 'fotorgear',
     },
+    {
+        name: '三星',
+        val: 'samsung',
+    },
 ]
 
 const _cameraIcons: Icons[] = [

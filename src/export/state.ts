@@ -1,10 +1,16 @@
-export const plusReady = (() => {
-    try {
-        return !!plus
-    } catch {
-        return false
-    }
-})()
+import { useEffect, useState } from "react"
+
+export const usePlusReady = () => {
+    const [state, setState] = useState(false)
+    useEffect(() => {
+        try {
+            setState(!!plus)
+        } catch {
+            setState(false)
+        }
+    }, [])
+    return state
+}
 
 export const isPC = (() => {
     const u = navigator.userAgent;
