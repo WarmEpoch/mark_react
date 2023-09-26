@@ -1,0 +1,25 @@
+{
+    "name": "@types/html5plus",
+    "version": "1.0.2",
+    "description": "TypeScript definitions for html5plus",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/html5plus",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Dcloud",
+            "url": "https://github.com/dcloudio",
+            "githubUsername": "dcloudio"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/html5plus"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "d0586c6b319370ad373e5830876e187edf9c72e19c98b2d4a49dfe1da24b9138",
+    "typeScriptVersion": "3.6"
+}
