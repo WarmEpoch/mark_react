@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Divider, Dropdown, Input, Layout, Popover, Space, message, notification, Image } from "antd";
+import { Button, Divider, Dropdown, Input, Layout, Popover, Space, message, Image } from "antd";
 import type { InputRef, MenuProps } from 'antd';
 import { RootState, removeImg, removeOnly, upOnly, upScale, useAppDispatch } from "../export/store";
 import { useSelector } from "react-redux";
@@ -8,7 +8,7 @@ import DropFilter from "./DropFilter";
 import { useMount } from "ahooks";
 import { fetchTime } from "../export/fetch";
 import DropSwitch from "./DropSwitch";
-import { usePlusReady } from "../export/state";
+import { usePlusReady, isPC } from "../export/state";
 
 const { Footer: Footer_Antd } = Layout;
 interface Props {
@@ -22,25 +22,8 @@ function Footer(props: Props) {
     const imgs = useSelector((state: RootState) => state.imgs)
     const make = useSelector((state: RootState) => state.make)
     const only = useSelector((state: RootState) => state.only)
-    const [notificationApi, notificationHolder] = notification.useNotification();
     const [messageApi, messageHolder] = message.useMessage();
     const plusReady = usePlusReady()
-    useEffect(() => {
-        if (make) {
-            notificationApi.open({
-                message: '导出图片',
-                description: plusReady ? 'App会自动为您保存到相册！' : '右键或长按进行保存，有误请更换浏览器。',
-                placement: 'bottomRight',
-                closeIcon: false,
-                duration: null,
-                key: 'export',
-            })
-        } else {
-            imgs.forEach(img => URL.revokeObjectURL(img.draw as string))
-            notificationApi.destroy()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [make])
 
 
     const scaleItem = [
@@ -67,7 +50,13 @@ function Footer(props: Props) {
     ]
 
     const scaleItems = (maxScale: number, scale: number): MenuProps['items'] => {
-        return scaleItem.map(item => {
+        return scaleItem.map((item, i) => {
+            if(maxScale < item.value){
+                item.value = maxScale
+                if(scaleItem[i - 1]?.value == maxScale) {
+                    return null
+                }
+            }
             return {
                 key: item.key,
                 label: <a onClick={e => {
@@ -77,7 +66,8 @@ function Footer(props: Props) {
                         value: item.value
                     }))
                 }}>{item.name}</a>,
-                disabled: item.value === scale || maxScale < item.value
+                disabled: item.value === scale,
+                value: item.value
             }
         })
     }
@@ -146,19 +136,28 @@ function Footer(props: Props) {
     const singRef = useRef<InputRef>(null);
     return (
         <>
-            {!make && ((imgs.length > 0 && check) ?
+            {
+            make ?
+                <Footer_Antd>
+                    <Space>
+                        Tips：{plusReady ? 'App会自动为您保存到相册！' : `${isPC ? '右键' : '长按'}保存，有误请更换浏览器。`}
+                    </Space>
+                </Footer_Antd>
+            :
+            imgs.length > 0 && check ?
                 <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }}>
                     <Space>
                         <Button size="large" onClick={() => dispath(removeImg(index))} danger icon={<DeleteOutlined />} />
                         <Dropdown menu={{ items: scaleItems(imgs[index]?.maxScale, imgs[index]?.scale) }}>
-                            <Button size="large">{GetScaleName(imgs[index]?.scale)}</Button>
+                            <Button size="large">{ GetScaleName(imgs[index]?.scale) }</Button>
                         </Dropdown>
                         <DropSwitch name="border" />
                         <DropSwitch name="shadow" />
                         <DropFilter name="filter" />
                         {children}
                     </Space>
-                </Footer_Antd> :
+                </Footer_Antd>
+            :
                 <Footer_Antd>
                     <Space split={<Divider type="vertical" />}>
                         <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
@@ -180,9 +179,8 @@ function Footer(props: Props) {
                         <Button type="text" target="_blank" size='small' href="//www.immers.icu/#quick">快捷指令</Button>
                         <Button type="text" target="_blank" size='small' href="//www.immers.icu/#call">联系我们</Button>
                     </Space>
-                </Footer_Antd>)
+                </Footer_Antd>
             }
-            {notificationHolder}
             {messageHolder}
         </>
     )

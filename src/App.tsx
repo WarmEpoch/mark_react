@@ -11,33 +11,18 @@ import { createFromIconfontCN, DownOutlined } from "@ant-design/icons"
 import { routesItems } from "./export/router"
 import { parse } from 'exifr'
 import heic2any from "heic2any"
-import { RootState, addImg, upMake, useAppDispatch } from './export/store';
+import { RootState, addImg, setCanvasMax, upMake, useAppDispatch } from './export/store';
 import { imageDomSize, imageResize, imgBlobToBase64 } from './export/image';
 import canvasSize from 'canvas-size';
 import { imgBase64LoadExif } from './export/piexif';
 import { useSelector } from 'react-redux';
 import { usePlusReady } from './export/state';
+import { CanvasMaxSize } from './export/cavnvas';
+import { useMount } from 'ahooks';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
 })
-
-const useCanvasMaxSize = () => {
-  const [canvasMaxSize, setCanvasMaxSize] = useState({
-    width: 1080,
-    height: 1080
-  })
-  useEffect(() => {
-    canvasSize.maxArea({
-      usePromise: true,
-      useWorker: true,
-    }).then(({ width, height }) => setCanvasMaxSize({
-      width,
-      height
-    }))
-  }, [])
-  return canvasMaxSize
-}
 
 const useRoutesItem = (id: string) => {
   const [routesItem, setRoutesItem] = useState<typeof routesItems>()
@@ -49,13 +34,21 @@ const useRoutesItem = (id: string) => {
 
 function App() {
 
-  const { width: canvasMaxWidth, height: canvasMaxHeight } = useCanvasMaxSize()
-
   const { pathname: id } = useLocation()
 
   const routesItem = useRoutesItem(id)
 
   const dispath = useAppDispatch()
+  
+  useMount(async () => {
+    const { maxArea, maxHeight, maxWidth, extent } = await CanvasMaxSize()
+    dispath(setCanvasMax({
+      maxArea,
+      maxHeight,
+      maxWidth,
+      extent,
+    }))
+  })
 
   const plusReady = usePlusReady()
   
@@ -65,6 +58,10 @@ function App() {
     const index = routesItems.findIndex(item => item.key === id)
     return routesItems[index]?.name || '敬请期待'
   }
+
+  const make = useSelector((state: RootState) => state.make)
+  const imgs = useSelector((state: RootState) => state.imgs)
+  const canvasMax = useSelector((state: RootState) => state.canvasMax)
 
   const formaTime = (Date: Date) => {
     const Y = Date.getFullYear();
@@ -107,12 +104,15 @@ function App() {
 
       const { width: urlWidth, height: urlHeight } = await imageDomSize(heic)
 
-      const isValidCanvas = canvasSize.test({
-        width: urlWidth,
-        height: urlHeight
-      })
+      // const isValidCanvas = canvasMax.maxHeight >= urlHeight && canvasMax.maxWidth >= urlWidth && canvasMax.maxArea >= urlHeight * urlWidth
 
-      const canvaScale = isValidCanvas ? 100 : Math.floor(urlWidth > urlHeight ? canvasMaxWidth / urlWidth * 100 : canvasMaxHeight / urlHeight * 100)
+      // const canvaScale = isValidCanvas && 100 || (() => {
+      //   if(canvasMax.extent){
+      //     return Math.floor(urlWidth > urlHeight ? canvasMax.maxWidth / urlWidth * 100 : canvasMax.maxHeight / urlHeight * 100)
+      //   }else{
+      //     return Math.floor(Math.sqrt(canvasMax.maxArea / urlHeight / urlWidth) * 100)
+      //   }
+      // })()
 
       dispath(addImg({
         id: id,
@@ -121,8 +121,8 @@ function App() {
         src: resizeHeic,
         height: urlHeight,
         width: urlWidth,
-        scale: canvaScale,
-        maxScale: canvaScale,
+        scale: 100,
+        maxScale: 100,
         exifr: {
           Make: output?.Make || void 0,
           Model: output?.Model || 'Immers Mark',
@@ -148,13 +148,9 @@ function App() {
     disabled: loading,
   }
 
-  const make = useSelector((state: RootState) => state.make)
-  const imgs = useSelector((state: RootState) => state.imgs)
-  
-
   return (
     <>
-      {contextHolder}
+      { contextHolder }
       <Header style={{ paddingTop: plusReady ? plus.navigator.getStatusbarHeight() : '0'}}>
         <Button type='link' style={{width: 'unset'}} href='/' icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} / >
         <Dropdown menu={{ items: routesItem }} placement="bottom" trigger={['click']} disabled={make}>

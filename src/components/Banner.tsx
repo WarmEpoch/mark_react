@@ -1,11 +1,11 @@
 import { Carousel } from "antd"
-import type { CarouselRef } from "antd"
 import { ReactNode, useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState, upIndex, useAppDispatch } from '../export/store'
 import { Layout } from "antd";
 import { useUnmount } from "ahooks"
 import "../css/Banner.css"
+import { CarouselRef } from "antd/es/carousel";
 
 const { Content } = Layout;
 

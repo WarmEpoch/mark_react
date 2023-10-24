@@ -40,7 +40,6 @@ export interface RImgModel extends ImgModel {
     border: number
     shadow: number
   }
-  draw?: string | undefined
 }
 
 const initialImg: RImgModel[] = []
@@ -71,15 +70,16 @@ const imgService = createSlice({
       const { index, key, value } = action.payload;
       state[index].reveals[key] = value
     },
-    upDraw(state: RImgModel[], action: PayloadAction<{ id: RImgModel['id'], value: RImgModel["draw"] }>){
-      const { id, value } = action.payload;
-      const _index = state.findIndex(img => img.id == id)
-      state[_index].draw = value
-    },
     upScale(state: RImgModel[], action: PayloadAction<{id: RImgModel['id'], value: number}>){
       const { id, value } = action.payload;
       const _index = state.findIndex(img => img.id == id)
       state[_index].scale = value
+    },
+    upMaxScale(state: RImgModel[], action: PayloadAction<{id: RImgModel['id'], value: number}>){
+      const { id, value } = action.payload;
+      const _index = state.findIndex(img => img.id == id)
+      state[_index].maxScale = value
+      state[_index].scale > value && (state[_index].scale = value)
     },
     upSetting(state: RImgModel[], action: PayloadAction<{ index: number, key: keyof RImgModel['setting'], value: number}>){
       const {index, key, value} = action.payload
@@ -88,7 +88,7 @@ const imgService = createSlice({
   },
 });
 
-export const { addImg, removeImg, upReveal, upDraw, upScale, upSetting } = imgService.actions;
+export const { addImg, removeImg, upReveal, upScale, upMaxScale, upSetting } = imgService.actions;
 
 const initialIndex = 0
 
@@ -190,7 +190,7 @@ const onlyService = createSlice({
   name: "only",
   initialState: initialOnly,
   reducers: {
-    upOnly(_state, action: PayloadAction<string>){
+    upOnly(_state, action: PayloadAction<typeof initialOnly>){
       localStorage.setItem('only', action.payload)
       return action.payload
     },
@@ -203,6 +203,27 @@ const onlyService = createSlice({
 
 export const { upOnly, removeOnly } = onlyService.actions;
 
+const initialCanvasMax = {
+  maxArea: 1166400,
+  maxHeight: 1080,
+  maxWidth: 1080,
+  extent: true
+}
+
+export type CanvasMaxType = typeof initialCanvasMax
+
+const canvasMaxService = createSlice({
+  name: "canvasMax",
+  initialState: initialCanvasMax,
+  reducers: {
+    setCanvasMax(state, action: PayloadAction<CanvasMaxType>) {
+      Object.assign(state, { ...action.payload })
+    }
+  },
+})
+
+export const { setCanvasMax } = canvasMaxService.actions;
+
 export const store = configureStore({
     reducer:{
         imgs: imgService.reducer,
@@ -212,6 +233,7 @@ export const store = configureStore({
         filter: filterService.reducer,
         make: makeService.reducer,
         only: onlyService.reducer,
+        canvasMax: canvasMaxService.reducer,
     }
 })
 

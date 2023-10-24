@@ -2,13 +2,14 @@ import { useEffect, useState, useRef, ReactNode } from "react"
 import html2canvas from 'html2canvas';
 import { imgBlobToBase64, imageDom, imageResize, imgBase64ToBlob, imgBase64Save } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
-import { RImgModel, RootState } from "../export/store"
-import { htmlCanvastoBlob, createCanvas } from '../export/cavnvas'
+import { RImgModel, RootState, upMaxScale, useAppDispatch } from "../export/store"
+import { htmlCanvastoBlob, createCanvas, canvasMaximage } from '../export/cavnvas'
 import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
 import { useSelector } from "react-redux";
 import { fetchCreates } from "../export/fetch";
 import { isPC, usePlusReady } from "../export/state";
+
 
 interface Props {
     img: RImgModel
@@ -21,12 +22,16 @@ function Draw(props: Props) {
     const { children, img, border = 0 } = props
     const make = useSelector((state: RootState) => state.make)
     const only = useSelector((state: RootState) => state.only)
+    const canvasMax = useSelector((state: RootState) => state.canvasMax)
     const div = useRef<HTMLDivElement>(null)
     const widthOrHeight = img.width > img.height ? img.width : img.height
-    const divStyleWidth = widthOrHeight + border * widthOrHeight / 100 * 2
+    let divStyleWidth = widthOrHeight + border / 100 * 2 * widthOrHeight
+    const { valid, scaleM } = canvasMaximage(divStyleWidth, divStyleWidth, canvasMax.maxHeight, canvasMax.maxWidth, canvasMax.maxArea, canvasMax.extent)
+    !valid && (divStyleWidth = divStyleWidth * scaleM)
     const [show, setShow] = useState(false)
     const [makeImg, setMakeImg] = useState('')
     const plusReady = usePlusReady()
+    const dispath = useAppDispatch()
 
     useEffect(() => {
         Promise.resolve().then(async () => {
@@ -63,6 +68,17 @@ function Draw(props: Props) {
             const canvasWidth = srcWidth + borders * 2
             const divDrawHeight = canvasWidth / divWidth * divHeight
             const canvasHeight = srcHeight + divDrawHeight + borders
+            if(!make){
+                const preSize = {
+                    width: img.width / srcWidth * canvasWidth,
+                    height: img.height / srcHeight * canvasHeight
+                }
+                const { valid, scale } = canvasMaximage(preSize.width, preSize.height, canvasMax.maxHeight, canvasMax.maxWidth, canvasMax.maxArea, canvasMax.extent)
+                !valid && dispath(upMaxScale({
+                    id: img.id,
+                    value: scale
+                }))
+            }
             const canvas = createCanvas(canvasWidth, canvasHeight)
             const context = canvas.getContext('2d', {
                 willReadFrequency: true,
@@ -118,12 +134,14 @@ function Draw(props: Props) {
         URL.revokeObjectURL(makeImg)
     })
 
+    const blank = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    
     return (
         <>
             <div ref={div} className="mark" style={{ width: `${divStyleWidth}px`, fontSize: img.width > img.height ? `${divStyleWidth * 0.018}px` : `${divStyleWidth * 0.033}px` }}>
                 { children }
             </div>
-            <img src={makeImg} style={{ width: '100%', opacity: show ? '1' : '0' }} data-html2canvas-ignore/>
+            <img src={show ? makeImg : blank} style={{ width: '100%', opacity: show ? '1' : '0' }} data-html2canvas-ignore/>
         </>
     )
 }
