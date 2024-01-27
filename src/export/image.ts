@@ -14,7 +14,7 @@ export const imageDomSize = async (url: string): Promise<{width: number,height: 
     }
 }
 
-import { createCanvas, htmlCanvastoBlob } from './cavnvas'
+import { createCanvas, htmlCanvastoBlob } from './canvas'
 
 export const imageResize = async (blobUrl: string, width: number, quality = 1, type = 'image/jpeg') => {
     const img = await imageDom(blobUrl)

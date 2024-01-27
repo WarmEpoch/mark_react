@@ -1,4 +1,4 @@
-import { Dropdown, Input, MenuProps, Upload, message } from "antd"
+import { Button, Dropdown, MenuProps, Upload, message } from "antd"
 import { useSelector } from "react-redux"
 import { RootState, RImgModel, upReveal, useAppDispatch, removeFilter, upFilter } from "../export/store";
 import filters from "../export/filters";
@@ -95,9 +95,11 @@ function DropFilter(props: Props) {
 
     return (
         <>
-            <Dropdown.Button menu={{ items }}>
-                <Input style={{ minWidth: '6em' }} bordered={false} disabled={key === 'icon' || key === 'filter' ? true : false} key={imgs[index]?.reveals[key] as string} defaultValue={filters.find(filter => filter['val'] == imgs[index]?.reveals[key])?.name || uploadFilter.find(filter => filter['value'] == imgs[index]?.reveals[key])?.name || '无滤镜'} />
-            </Dropdown.Button>
+            <Dropdown menu={{ items }}>
+                <Button size="large">
+                    {filters.find(filter => filter['val'] == imgs[index]?.reveals[key])?.name || uploadFilter.find(filter => filter['value'] == imgs[index]?.reveals[key])?.name || '无滤镜'}
+                </Button>
+            </Dropdown>
             {contextHolder}
         </>
     )

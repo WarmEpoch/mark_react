@@ -94,11 +94,6 @@ svg, canvas{
     overflow: auto;
 }
 
-/* .html2canvas-container{
-    position: unset!important;
-    visibility: unset!important;
-} */
-
 .mark.show{
     display: block;
 }

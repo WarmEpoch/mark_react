@@ -13,11 +13,10 @@ import { parse } from 'exifr'
 import heic2any from "heic2any"
 import { RootState, addImg, setCanvasMax, upMake, useAppDispatch } from './export/store';
 import { imageDomSize, imageResize, imgBlobToBase64 } from './export/image';
-import canvasSize from 'canvas-size';
 import { imgBase64LoadExif } from './export/piexif';
 import { useSelector } from 'react-redux';
 import { usePlusReady } from './export/state';
-import { CanvasMaxSize } from './export/cavnvas';
+import { CanvasMaxSize } from './export/canvas';
 import { useMount } from 'ahooks';
 
 const IconFont = createFromIconfontCN({
@@ -61,7 +60,6 @@ function App() {
 
   const make = useSelector((state: RootState) => state.make)
   const imgs = useSelector((state: RootState) => state.imgs)
-  const canvasMax = useSelector((state: RootState) => state.canvasMax)
 
   const formaTime = (Date: Date) => {
     const Y = Date.getFullYear();

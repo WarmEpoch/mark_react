@@ -140,21 +140,25 @@ function Footer(props: Props) {
             make ?
                 <Footer_Antd>
                     <Space>
-                        Tips：{plusReady ? 'App会自动为您保存到相册！' : `${isPC ? '右键' : '长按'}保存，有误请更换浏览器。`}
+                        Tips：{plusReady ? 'App会自动为您保存到相册！' : `${isPC ? '右键保存，有误请更换浏览器。' : '长按保存，推荐使用夸克浏览器。'}`}
                     </Space>
                 </Footer_Antd>
             :
-            imgs.length > 0 && check ?
+            imgs.length > 0 ?
                 <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }}>
                     <Space>
                         <Button size="large" onClick={() => dispath(removeImg(index))} danger icon={<DeleteOutlined />} />
                         <Dropdown menu={{ items: scaleItems(imgs[index]?.maxScale, imgs[index]?.scale) }}>
                             <Button size="large">{ GetScaleName(imgs[index]?.scale) }</Button>
                         </Dropdown>
-                        <DropSwitch name="border" />
-                        <DropSwitch name="shadow" />
                         <DropFilter name="filter" />
-                        {children}
+                        { only && 
+                            <>
+                                <DropSwitch name="border" />
+                                <DropSwitch name="shadow" />
+                                {children}
+                            </>
+                        }
                     </Space>
                 </Footer_Antd>
             :

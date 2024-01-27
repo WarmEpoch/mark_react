@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import { imgBlobToBase64, imageDom, imageResize, imgBase64ToBlob, imgBase64Save } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
 import { RImgModel, RootState, upMaxScale, useAppDispatch } from "../export/store"
-import { htmlCanvastoBlob, createCanvas, canvasMaximage } from '../export/cavnvas'
+import { htmlCanvastoBlob, createCanvas, canvasMaximage } from '../export/canvas'
 import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
 import { useSelector } from "react-redux";
@@ -40,7 +40,6 @@ function Draw(props: Props) {
             const divUrl = await html2canvas(div.current as HTMLDivElement, {
                 useCORS: true,
                 scale: 1,
-                backgroundColor: null,
             }).then(async dom => {
                 div.current?.classList.remove("show")
                 const blob = await htmlCanvastoBlob(dom, void 0, "image/png")
@@ -80,9 +79,8 @@ function Draw(props: Props) {
                 }))
             }
             const canvas = createCanvas(canvasWidth, canvasHeight)
-            const context = canvas.getContext('2d', {
-                willReadFrequency: true,
-            }) as CanvasRenderingContext2D
+            canvas.transferControlToOffscreen
+            const context = canvas.getContext('2d') as CanvasRenderingContext2D
             context.fillStyle = "#ffffff";
             context.fillRect(0, 0, canvasWidth, canvasHeight);
             if(img.setting.shadow > 0){

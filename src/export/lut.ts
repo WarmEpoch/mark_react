@@ -1,4 +1,4 @@
-import { createCanvas } from "./cavnvas";
+import { createCanvas } from "./canvas";
 import { imageDom } from "./image";
 
 export const CanvasAddfilter = async (lutSrc: string, canvasData: ImageData) => {

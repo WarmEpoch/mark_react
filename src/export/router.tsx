@@ -44,7 +44,6 @@ const routesItems = Object.entries(pageTsx).map(([path]) => {
 
 const subRoutes = Object.entries(pageTsx).map(([path, tsx]) => {
   const url = path.replace('../views/', '').replace('.tsx', '').toLowerCase()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const El = lazy(tsx as any)
   return {
     path: url,
