@@ -12,12 +12,12 @@
   "dependencies": {
     "@ant-design/icons": "^5.1.1",
     "@reduxjs/toolkit": "^1.9.5",
+    "@wtto00/html2canvas": "^1.4.3",
     "ahooks": "^3.7.8",
     "antd": "^5.10.1",
     "canvas-size": "^1.2.6",
     "exifr": "^7.1.3",
     "heic2any": "^0.0.4",
-    "html2canvas": "^1.4.1",
     "piexifjs": "^2.0.0-beta.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@types/canvas-size": "^1.2.0",
-    "@types/html5plus": "^1.0.2",
+    "@types/html5plus": "^1.0.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@types/react-redux": "^7.1.25",

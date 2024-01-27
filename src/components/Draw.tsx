@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, ReactNode } from "react"
-import html2canvas from 'html2canvas';
+import html2canvas from '@wtto00/html2canvas';
 import { imgBlobToBase64, imageDom, imageResize, imgBase64ToBlob, imgBase64Save } from "../export/image";
 import { imgBase64ToExif } from "../export/piexif"
 import { RImgModel, RootState, upMaxScale, useAppDispatch } from "../export/store"

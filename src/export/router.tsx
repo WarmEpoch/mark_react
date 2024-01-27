@@ -1,5 +1,5 @@
 import { Navigate, Link, createBrowserRouter } from 'react-router-dom'
-import { lazy } from 'react'
+import { ComponentType, lazy } from 'react'
 import App from '../App'
 
 const pageTsx = import.meta.glob('../views/**')
@@ -44,7 +44,9 @@ const routesItems = Object.entries(pageTsx).map(([path]) => {
 
 const subRoutes = Object.entries(pageTsx).map(([path, tsx]) => {
   const url = path.replace('../views/', '').replace('.tsx', '').toLowerCase()
-  const El = lazy(tsx as any)
+  const El = lazy(tsx as () => Promise<{
+    default: ComponentType<any>;
+  }>)
   return {
     path: url,
     element: <El />,
