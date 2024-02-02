@@ -6,7 +6,7 @@ export const imageDom = (url: string): Promise<HTMLImageElement> => {
     })
 }
 
-export const imageDomSize = async (url: string): Promise<{width: number,height: number}> => {
+export const imageDomSize = async (url: string): Promise<{ width: number, height: number }> => {
     const dom = await imageDom(url)
     return {
         width: dom.width,
@@ -39,25 +39,25 @@ export const imgBlobToBase64 = (blob: Blob): Promise<string> => {
 export const imgBase64ToBlob = (base64Image: string): Blob => {
     // Split into two parts
     const parts = base64Image.split(';base64,');
-  
+
     // Hold the content type
     const imageType = parts[0].split(':')[1];
-  
+
     // Decode Base64 string
     const decodedData = atob(parts[1]);
-  
+
     // Create UNIT8ARRAY of size same as row data length
     const uInt8Array = new Uint8Array(decodedData.length);
-  
+
     // Insert all character code into uInt8Array
     for (let i = 0; i < decodedData.length; ++i) {
-      uInt8Array[i] = decodedData.charCodeAt(i);
+        uInt8Array[i] = decodedData.charCodeAt(i);
     }
-  
+
     // Return BLOB image after conversion
     const blob = new Blob([uInt8Array], { type: imageType });
     return blob;
-  }
+}
 
 export const imgBase64Save = (base64: string, name: string): Promise<boolean> => {
     const basePath = '_downloads'
@@ -79,8 +79,8 @@ export const imgBase64Save = (base64: string, name: string): Promise<boolean> =>
                     writer.onerror = () => resolve(false)
                     writer.seek(0)
                     writer.writeAsBinary(base64.split(';base64,')[1])
-                },() => resolve(false))
-            },() => resolve(false))
-        },() => resolve(false))
+                }, () => resolve(false))
+            }, () => resolve(false))
+        }, () => resolve(false))
     })
 }

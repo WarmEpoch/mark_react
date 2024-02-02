@@ -43,7 +43,7 @@ function Morn() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <p style={{ fontWeight: 'bold', lineHeight: img.width > img.height ? '3.8em' : '3em' }}>{ img.reveals.Model }</p>
                   <div style={{ width: '.1em', height: img.width > img.height ? '2em' : '1.6em', backgroundColor: '#ccc', margin: '0 .5em', marginTop: '.5em' }}></div>
-                  <img src={img.reveals.icon} style={{ boxSizing: 'border-box', height: img.width > img.height ? '3.4em' : '2.6em', marginTop: '.5em' }} />
+                  <img src={img.reveals.icon} style={{ boxSizing: 'border-box', height: img.width > img.height ? '3.4em' : '2.6em', marginTop: '.5em', padding: '.4em 0' }} />
                 </div>
                 <div style={{ display: 'flex', gap: '1em', padding: '1em 0 2em 0'}}>
                   <Style name="S" value={img.reveals.Exposure} />

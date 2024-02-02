@@ -51,7 +51,7 @@ const imgService = createSlice({
     addImg(state, action: PayloadAction<ImgModel>) {
       action.payload.exifr.locate = `${action.payload.exifr.LatitudeRef} ${action.payload.exifr.LongitudeRef}`.replace(/undefined/g,'').trim() || void 0
       action.payload.exifr.parm = `${action.payload.exifr.Focal} ${action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso}`.replace(/undefined/g,'').trim()
-      state.push({...action.payload, ...{
+      const _rImgModel = Object.assign(action.payload, {
         reveals: {
           ...action.payload.exifr,
           icon: defaultIcons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || cameraIcons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || cameraIcons[0].val,
@@ -61,7 +61,8 @@ const imgService = createSlice({
           border: 0,
           shadow: 0
         }
-      }});
+      })
+      state.push(_rImgModel);
     },
     removeImg(state, action: PayloadAction<number>){
       state.splice(action.payload,1)

@@ -20,7 +20,7 @@ import { CanvasMaxSize } from './export/canvas';
 import { useMount } from 'ahooks';
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
+  scriptUrl: 'https://at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
 })
 
 const useRoutesItem = (id: string) => {
@@ -71,6 +71,7 @@ function App() {
     return `${Y}.${M}.${D} ${H}:${Mi}:${S}`
   }
   const [loading, setLoading] = useState(false)
+  
   const UploadProps: UploadProps = {
     beforeUpload: async (file) => {
 
@@ -145,12 +146,12 @@ function App() {
     multiple: true,
     disabled: loading,
   }
-
+  
   return (
     <>
       { contextHolder }
       <Header style={{ paddingTop: plusReady ? plus.navigator.getStatusbarHeight() : '0'}}>
-        <Button type='link' style={{width: 'unset'}} href='/' icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} / >
+        <Button type='link' href="/" style={{width: 'unset'}} icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} />
         <Dropdown menu={{ items: routesItem }} placement="bottom" trigger={['click']} disabled={make}>
           <Button>{GetElementName(id)}<DownOutlined /></Button>
         </Dropdown>

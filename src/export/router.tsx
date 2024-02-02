@@ -1,4 +1,4 @@
-import { Navigate, Link, createBrowserRouter } from 'react-router-dom'
+import { Navigate, Link, createHashRouter } from 'react-router-dom'
 import { ComponentType, lazy } from 'react'
 import App from '../App'
 
@@ -45,7 +45,7 @@ const routesItems = Object.entries(pageTsx).map(([path]) => {
 const subRoutes = Object.entries(pageTsx).map(([path, tsx]) => {
   const url = path.replace('../views/', '').replace('.tsx', '').toLowerCase()
   const El = lazy(tsx as () => Promise<{
-    default: ComponentType<any>;
+    default: ComponentType;
   }>)
   return {
     path: url,
@@ -53,7 +53,8 @@ const subRoutes = Object.entries(pageTsx).map(([path, tsx]) => {
   }
 })
 
-const router = createBrowserRouter([
+// const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Navigate to="mi" replace />,

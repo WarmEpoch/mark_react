@@ -51,9 +51,9 @@ function Footer(props: Props) {
 
     const scaleItems = (maxScale: number, scale: number): MenuProps['items'] => {
         return scaleItem.map((item, i) => {
-            if(maxScale < item.value){
+            if (maxScale < item.value) {
                 item.value = maxScale
-                if(scaleItem[i - 1]?.value == maxScale) {
+                if (scaleItem[i - 1]?.value == maxScale) {
                     return null
                 }
             }
@@ -129,61 +129,66 @@ function Footer(props: Props) {
                 setSingB(false)
             }
         })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sing])
     const [alone, setAlone] = useState(only)
     const [pop, setPop] = useState(false)
     const singRef = useRef<InputRef>(null);
+
     return (
         <>
             {
-            make ?
-                <Footer_Antd>
-                    <Space>
-                        Tips：{plusReady ? 'App会自动为您保存到相册！' : `${isPC ? '右键保存，有误请更换浏览器。' : '长按保存，推荐使用夸克浏览器。'}`}
-                    </Space>
-                </Footer_Antd>
-            :
-            imgs.length > 0 ?
-                <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }}>
-                    <Space>
-                        <Button size="large" onClick={() => dispath(removeImg(index))} danger icon={<DeleteOutlined />} />
-                        <Dropdown menu={{ items: scaleItems(imgs[index]?.maxScale, imgs[index]?.scale) }}>
-                            <Button size="large">{ GetScaleName(imgs[index]?.scale) }</Button>
-                        </Dropdown>
-                        <DropFilter name="filter" />
-                        { only && 
-                            <>
+                make ?
+                    <Footer_Antd>
+                        <Space>
+                            Tips：{plusReady ? 'App会自动为您保存到相册！' : `${isPC ? '右键保存，有误请更换浏览器。' : '长按保存，推荐使用夸克浏览器。'}`}
+                        </Space>
+                    </Footer_Antd>
+                    :
+                    imgs.length > 0 ?
+                        <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }}>
+                            <Space>
+                                <Button size="large" onClick={() => dispath(removeImg(index))} danger icon={<DeleteOutlined />} />
+                                <Dropdown menu={{ items: scaleItems(imgs[index]?.maxScale, imgs[index]?.scale) }}>
+                                    <Button size="large">{GetScaleName(imgs[index]?.scale)}</Button>
+                                </Dropdown>
+                                <DropFilter name="filter" />
                                 <DropSwitch name="border" />
                                 <DropSwitch name="shadow" />
-                                {children}
-                            </>
-                        }
-                    </Space>
-                </Footer_Antd>
-            :
-                <Footer_Antd>
-                    <Space split={<Divider type="vertical" />}>
-                        <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
-                            <Image src="https://shp.qpic.cn/collector/1523230910/3522ceeb-3d8f-484b-b86b-5d83c033c4dc/0" width={320} preview={false} />
-                        }>
-                            <Input ref={singRef} style={{ width: '4.4em' }} enterKeyHint="done" size='small' placeholder="身份码" maxLength={6} bordered={false} value={sing} onChange={e => {
-                                setSing(e.target.value)
-                                setAlone(e.target.value)
-                            }} onBlur={() => {
-                                setSing('自定义')
-                                setPop(false)    
-                            }} onFocus={() => {
-                                setPop(true)
-                                setSing(alone)
-                            }} onPressEnter={() => singRef.current?.blur()} />
-                        </Popover>
-                        <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">沐享教程</Button>
-                        <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
-                        <Button type="text" target="_blank" size='small' href="//www.immers.icu/#quick">快捷指令</Button>
-                        <Button type="text" target="_blank" size='small' href="//www.immers.icu/#call">联系我们</Button>
-                    </Space>
-                </Footer_Antd>
+                                {(only || plusReady) &&
+                                    <>
+                                        {children}
+                                    </>
+                                }
+                            </Space>
+                        </Footer_Antd>
+                        :
+                        plusReady ? 
+                            <Footer_Antd>
+                            </Footer_Antd>
+                        :
+                        
+                        <Footer_Antd>
+                            <Space split={<Divider type="vertical" />}>
+                                <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
+                                    <Image src="https://shp.qpic.cn/collector/1523230910/3522ceeb-3d8f-484b-b86b-5d83c033c4dc/0" width={320} preview={false} />
+                                }>
+                                    <Input ref={singRef} style={{ width: '4.4em' }} enterKeyHint="done" size='small' placeholder="身份码" maxLength={6} bordered={false} value={sing} onChange={e => {
+                                        setSing(e.target.value)
+                                        setAlone(e.target.value)
+                                    }} onBlur={() => {
+                                        setSing('自定义')
+                                        setPop(false)
+                                    }} onFocus={() => {
+                                        setPop(true)
+                                        setSing(alone)
+                                    }} onPressEnter={() => singRef.current?.blur()} />
+                                </Popover>
+                                <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">沐享教程</Button>
+                                <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
+                                <Button type="text" target="_blank" size='small' href="//www.immers.icu/#quick">快捷指令</Button>
+                                <Button type="text" target="_blank" size='small' href="//www.immers.icu/#call">联系我们</Button>
+                            </Space>
+                        </Footer_Antd>
             }
             {messageHolder}
         </>

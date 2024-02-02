@@ -18,8 +18,8 @@ export const isPC = (() => {
     let flag = true;
     for (let i = 0; i < Agents.length; i++) {
         if (u.indexOf(Agents[i]) > 0) {
-        flag = false;
-        break;
+            flag = false;
+            break;
         }
     }
     return flag;

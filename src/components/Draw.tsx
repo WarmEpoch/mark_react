@@ -40,6 +40,7 @@ function Draw(props: Props) {
             const divUrl = await html2canvas(div.current as HTMLDivElement, {
                 useCORS: true,
                 scale: 1,
+                backgroundColor: null
             }).then(async dom => {
                 div.current?.classList.remove("show")
                 const blob = await htmlCanvastoBlob(dom, void 0, "image/png")
@@ -47,12 +48,14 @@ function Draw(props: Props) {
             })
             const divDom = await imageDom(divUrl)
             const src = make ? img.url : img.src
-            const imgDom = make && img.scale < 100 ? await imageDom(await imageResize(src, img.width * (img.scale / 100) - (img.width * img.setting.border / 100))) : await imageDom(src)
+            const imgDom = make && img.scale < 100 ? await imageDom(
+                await imageResize(src, img.width * (img.scale / 100) - (img.width * img.setting.border / 100))
+            ) : await imageDom(src)
             const { width: divWidth, height: divHeight } = divDom
             const { width: srcWidth, height: srcHeight } = imgDom
             const borders = (() => {
                 const widthOrHeight = img.width > img.height ? srcWidth : srcHeight
-                if(only){
+                if(only || plusReady){
                     if(img.setting.border){
                         return widthOrHeight * img.setting.border / 100
                     }else{
@@ -110,7 +113,7 @@ function Draw(props: Props) {
                 })())
                 setMakeImg(base64Exif)
                 if(plusReady){
-                    await imgBase64Save(base64Exif, `${img.name}.jpg`) && plus.nativeUI.toast("图片已保存到相册")
+                    await imgBase64Save(base64Exif, `${img.name}.jpg`) && plus.nativeUI.toast("已保存至相册")
                 }else if(isPC){
                     const blobUrl = URL.createObjectURL(imgBase64ToBlob(base64Exif))
                     const a = document.createElement('a')
@@ -125,7 +128,6 @@ function Draw(props: Props) {
             URL.revokeObjectURL(divUrl)
             setShow(true)
         })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [make, img.reveals, img.setting, only])
 
     useUnmount(() => {

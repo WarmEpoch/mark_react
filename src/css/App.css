@@ -1,6 +1,15 @@
 @import "https://font.sec.miui.com/font/css?family=MiSans:300,450,500,650:Chinese_Simplify,Latin&display=swap";
 @import "https://font.sec.miui.com/font/css?family=Mi_Lan_Pro:200,300,400,500,600,700,800:Chinese_Simplify,Latin&display=swap";
 
+a, img, input, button{
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+ }
+
 html,body,#root{
     height: 100%;
     width: 100%;
@@ -50,7 +59,8 @@ svg, canvas{
 }
 
 .ant-layout-footer{
-    padding: 2%;
+    padding: 1rem;
+    padding-bottom: 2rem;
     width: 100%;
     overflow-x: auto;
     display: flex;
@@ -65,7 +75,7 @@ svg, canvas{
 }
 
 .ant-layout-footer::-webkit-scrollbar{
-    width: 0;
+    display: none;
 }
 
 .ant-layout-footer .ant-input[disabled]{

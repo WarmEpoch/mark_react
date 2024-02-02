@@ -5,8 +5,6 @@ import { Provider } from "react-redux";
 import { store } from "./export/store";
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
-// import VConsole from 'vconsole';
-// new VConsole();
 
 const theme = {
   token: {
@@ -14,10 +12,11 @@ const theme = {
   },
 }
 
+
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <ConfigProvider locale={ zhCN } theme={ theme }>
+  <ConfigProvider locale={zhCN} theme={theme}>
     <Provider store={store}>
-      <RouterProvider router={ router } />
+      <RouterProvider router={router} />
     </Provider>
   </ConfigProvider>
 )

@@ -94,7 +94,7 @@ const Icons = (icons: Icons[]) => icons.map(icon => {
     return {
         name: icon['name'],
         describe: (icon['describe'] || icon['val']).toLocaleLowerCase(),
-        val: `//web.immers.icu/assets/icon/${icon['val']}.svg`,
+        val: `https://web.immers.icu/assets/icon/${icon['val']}.svg`,
     }
 })
 
