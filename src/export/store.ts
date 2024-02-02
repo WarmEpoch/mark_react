@@ -29,6 +29,10 @@ export interface ImgModel {
     locate?:       string | undefined
   },
   exif: IExif | undefined,
+  setting: {
+    border: number
+    shadow: number
+  }
 }
 
 export interface RImgModel extends ImgModel {
@@ -36,10 +40,6 @@ export interface RImgModel extends ImgModel {
     icon: string
     filter: string | undefined
   } & ImgModel['exifr']
-  setting: {
-    border: number
-    shadow: number
-  }
 }
 
 const initialImg: RImgModel[] = []
@@ -56,10 +56,6 @@ const imgService = createSlice({
           ...action.payload.exifr,
           icon: defaultIcons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || cameraIcons.find(icon => icon.describe == action.payload.exifr.Make?.toLocaleLowerCase())?.val || cameraIcons[0].val,
           filter: void 0,
-        },
-        setting: {
-          border: 0,
-          shadow: 0
         }
       })
       state.push(_rImgModel);

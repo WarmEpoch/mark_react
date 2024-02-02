@@ -8,7 +8,7 @@ import { Button, Dropdown, Layout, Upload, message, Space, Spin } from "antd";
 import type { UploadProps } from 'antd';
 const { Header } = Layout;
 import { createFromIconfontCN, DownOutlined } from "@ant-design/icons"
-import { routesItems } from "./export/router"
+import { routesConfig, routesItems } from "./export/router"
 import { parse } from 'exifr'
 import heic2any from "heic2any"
 import { RootState, addImg, setCanvasMax, upMake, useAppDispatch } from './export/store';
@@ -33,9 +33,9 @@ const useRoutesItem = (id: string) => {
 
 function App() {
 
-  const { pathname: id } = useLocation()
+  const { pathname } = useLocation()
 
-  const routesItem = useRoutesItem(id)
+  const routesItem = useRoutesItem(pathname)
 
   const dispath = useAppDispatch()
   
@@ -55,7 +55,15 @@ function App() {
 
   const GetElementName = (id: string | undefined) => {
     const index = routesItems.findIndex(item => item.key === id)
-    return routesItems[index]?.name || '敬请期待'
+    return routesItems[index].name || '敬请期待'
+  }
+
+  const GetSetting = (id: string | undefined) => {
+    const index = routesConfig.findIndex(item => item.path === id)
+    return routesConfig[index].setting || {
+      border: 0,
+      shadow: 0
+    }
   }
 
   const make = useSelector((state: RootState) => state.make)
@@ -136,6 +144,7 @@ function App() {
           LensMake: output?.LensMake || void 0,
         },
         exif: imgBase64LoadExif(fileBase64),
+        setting: GetSetting(pathname)
       }))
       
       setLoading(false)
@@ -153,7 +162,7 @@ function App() {
       <Header style={{ paddingTop: plusReady ? plus.navigator.getStatusbarHeight() : '0'}}>
         <Button type='link' href="/" style={{width: 'unset'}} icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} />
         <Dropdown menu={{ items: routesItem }} placement="bottom" trigger={['click']} disabled={make}>
-          <Button>{GetElementName(id)}<DownOutlined /></Button>
+          <Button>{GetElementName(pathname)}<DownOutlined /></Button>
         </Dropdown>
         <Space>
           <Upload {...UploadProps}>

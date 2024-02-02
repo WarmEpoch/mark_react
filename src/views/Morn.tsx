@@ -38,7 +38,7 @@ function Morn() {
       <Banner>
         {
           imgs.map(img =>
-            <Draw key={img.id} img={img} border={4}>
+            <Draw key={img.id} img={img}>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexFlow: 'column' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <p style={{ fontWeight: 'bold', lineHeight: img.width > img.height ? '3.8em' : '3em' }}>{ img.reveals.Model }</p>

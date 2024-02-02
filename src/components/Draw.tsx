@@ -14,18 +14,17 @@ import { isPC, usePlusReady } from "../export/state";
 interface Props {
     img: RImgModel
     children: ReactNode
-    border?: number
 }
 
 
 function Draw(props: Props) {
-    const { children, img, border = 0 } = props
+    const { children, img } = props
     const make = useSelector((state: RootState) => state.make)
     const only = useSelector((state: RootState) => state.only)
     const canvasMax = useSelector((state: RootState) => state.canvasMax)
     const div = useRef<HTMLDivElement>(null)
     const widthOrHeight = img.width > img.height ? img.width : img.height
-    let divStyleWidth = widthOrHeight + border / 100 * 2 * widthOrHeight
+    let divStyleWidth = widthOrHeight + img.setting.border / 100 * 2 * widthOrHeight
     const { valid, scaleM } = canvasMaximage(divStyleWidth, divStyleWidth, canvasMax.maxHeight, canvasMax.maxWidth, canvasMax.maxArea, canvasMax.extent)
     !valid && (divStyleWidth = divStyleWidth * scaleM)
     const [show, setShow] = useState(false)
@@ -55,17 +54,18 @@ function Draw(props: Props) {
             const { width: srcWidth, height: srcHeight } = imgDom
             const borders = (() => {
                 const widthOrHeight = img.width > img.height ? srcWidth : srcHeight
-                if(only || plusReady){
-                    if(img.setting.border){
-                        return widthOrHeight * img.setting.border / 100
-                    }else{
-                        return 0
-                    }
-                }
-                if(border){
-                    return widthOrHeight * border / 100
-                }
-                return 0
+                return widthOrHeight * img.setting.border / 100
+                // if(only || plusReady){
+                //     if(img.setting.border){
+                //         return widthOrHeight * img.setting.border / 100
+                //     }else{
+                //         return 0
+                //     }
+                // }
+                // if(border){
+                //     return widthOrHeight * border / 100
+                // }
+                // return 0
             })()
             const canvasWidth = srcWidth + borders * 2
             const divDrawHeight = canvasWidth / divWidth * divHeight
