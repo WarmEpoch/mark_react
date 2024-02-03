@@ -104,7 +104,7 @@ function DropInput(props: Props) {
     return (
         <Dropdown.Button menu={{ items }}>
             <Tooltip placement="topLeft" title={tip} open={focus && tipShow}>
-                <Input enterKeyHint="done" style={{ minWidth: '8em' }} bordered={false} disabled={false} key={imgs[index]?.reveals[key]} defaultValue={imgs[index]?.reveals[key] || '空'} onChange={e => {
+                <Input enterKeyHint="done" style={{ minWidth: '8em' }} variant="borderless" disabled={false} key={imgs[index]?.reveals[key]} defaultValue={imgs[index]?.reveals[key] || '空'} onChange={e => {
                     findReveals(e.target)
                     setTipShow(true)
                 }} onBlur={() => setFocus(false)} onFocus={e => {

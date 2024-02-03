@@ -103,7 +103,7 @@ function DropIcon(props: Props) {
     return (
         <>
             <Dropdown.Button menu={{ items }}>
-                <Input style={{ minWidth: '4em' }} bordered={false} disabled={true} key={imgs[index]?.reveals[key]} defaultValue={defaultIcons.find(icon => icon['val'] == imgs[index]?.reveals[key])?.name || cameraIcons.find(icon => icon['val'] == imgs[index]?.reveals[key])?.name || uploadIcons.find(icon => icon['value'] == imgs[index]?.reveals[key])?.name || '错误'} />
+                <Input style={{ minWidth: '4em' }} variant="borderless" disabled={true} key={imgs[index]?.reveals[key]} defaultValue={defaultIcons.find(icon => icon['val'] == imgs[index]?.reveals[key])?.name || cameraIcons.find(icon => icon['val'] == imgs[index]?.reveals[key])?.name || uploadIcons.find(icon => icon['value'] == imgs[index]?.reveals[key])?.name || '错误'} />
             </Dropdown.Button>
             {contextHolder}
         </>

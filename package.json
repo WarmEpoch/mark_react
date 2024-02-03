@@ -14,7 +14,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@wtto00/html2canvas": "^1.4.3",
     "ahooks": "^3.7.8",
-    "antd": "^5.10.1",
+    "antd": "^5.13.3",
     "canvas-size": "^1.2.6",
     "exifr": "^7.1.3",
     "heic2any": "^0.0.4",
@@ -27,8 +27,10 @@
     "vconsole": "^3.15.1"
   },
   "devDependencies": {
+    "@dcloudio/types": "^3.4.7",
     "@types/canvas-size": "^1.2.0",
     "@types/html5plus": "^1.0.5",
+    "@types/node": "^20.11.16",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@types/react-redux": "^7.1.25",

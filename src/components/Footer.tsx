@@ -134,6 +134,8 @@ function Footer(props: Props) {
     const [pop, setPop] = useState(false)
     const singRef = useRef<InputRef>(null);
 
+    const areaBottom = plusReady ? plus.webview.currentWebview().getSafeAreaInsets().deviceBottom + 'px' : '0'
+    
     return (
         <>
             {
@@ -145,7 +147,7 @@ function Footer(props: Props) {
                     </Footer_Antd>
                     :
                     imgs.length > 0 ?
-                        <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }}>
+                        <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }} style={{ paddingBottom: `calc(${areaBottom} + 1rem)` }}>
                             <Space>
                                 <Button size="large" onClick={() => dispath(removeImg(index))} danger icon={<DeleteOutlined />} />
                                 <Dropdown menu={{ items: scaleItems(imgs[index]?.maxScale, imgs[index]?.scale) }}>
@@ -154,11 +156,12 @@ function Footer(props: Props) {
                                 <DropFilter name="filter" />
                                 <DropSwitch name="border" />
                                 <DropSwitch name="shadow" />
-                                {(only || plusReady) &&
+                                {children}
+                                {/* {(only || plusReady) &&
                                     <>
                                         {children}
                                     </>
-                                }
+                                } */}
                             </Space>
                         </Footer_Antd>
                         :
@@ -169,10 +172,10 @@ function Footer(props: Props) {
                         
                         <Footer_Antd>
                             <Space split={<Divider type="vertical" />}>
-                                <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
+                                {/* <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
                                     <Image src="https://shp.qpic.cn/collector/1523230910/3522ceeb-3d8f-484b-b86b-5d83c033c4dc/0" width={320} preview={false} />
                                 }>
-                                    <Input ref={singRef} style={{ width: '4.4em' }} enterKeyHint="done" size='small' placeholder="身份码" maxLength={6} bordered={false} value={sing} onChange={e => {
+                                    <Input ref={singRef} style={{ width: '4.4em' }} enterKeyHint="done" size='small' placeholder="身份码" maxLength={6} variant="borderless" value={sing} onChange={e => {
                                         setSing(e.target.value)
                                         setAlone(e.target.value)
                                     }} onBlur={() => {
@@ -182,11 +185,11 @@ function Footer(props: Props) {
                                         setPop(true)
                                         setSing(alone)
                                     }} onPressEnter={() => singRef.current?.blur()} />
-                                </Popover>
-                                <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">沐享教程</Button>
-                                <Button type="text" target="_blank" size='small' href="//mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
-                                <Button type="text" target="_blank" size='small' href="//www.immers.icu/#quick">快捷指令</Button>
-                                <Button type="text" target="_blank" size='small' href="//www.immers.icu/#call">联系我们</Button>
+                                </Popover> */}
+                                <Button type="text" target="_blank" size='small' href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">沐享教程</Button>
+                                <Button type="text" target="_blank" size='small' href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
+                                <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#quick">快捷指令</Button>
+                                <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#call">联系我们</Button>
                             </Space>
                         </Footer_Antd>
             }

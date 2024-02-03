@@ -60,7 +60,6 @@ svg, canvas{
 
 .ant-layout-footer{
     padding: 1rem;
-    padding-bottom: 2rem;
     width: 100%;
     overflow-x: auto;
     display: flex;
