@@ -1,12 +1,12 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Divider, Dropdown, Input, Layout, Popover, Space, message, Image } from "antd";
-import type { InputRef, MenuProps } from 'antd';
-import { RootState, removeImg, removeOnly, upOnly, upScale, useAppDispatch } from "../export/store";
+import { Button, Divider, Dropdown, Layout, Space, } from "antd"; // Input,Popover,message, Image
+import type { MenuProps } from 'antd'; //InputRef,
+import { RootState, removeImg, upScale, useAppDispatch } from "../export/store"; //, removeOnly, upOnly
 import { useSelector } from "react-redux";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode } from "react"; //, useEffect, useRef, useState
 import DropFilter from "./DropFilter";
-import { useMount } from "ahooks";
-import { fetchTime } from "../export/fetch";
+// import { useMount } from "ahooks";
+// import { fetchTime } from "../export/fetch";
 import DropSwitch from "./DropSwitch";
 import { usePlusReady, isPC } from "../export/state";
 
@@ -21,8 +21,8 @@ function Footer(props: Props) {
     const index = useSelector((state: RootState) => state.index)
     const imgs = useSelector((state: RootState) => state.imgs)
     const make = useSelector((state: RootState) => state.make)
-    const only = useSelector((state: RootState) => state.only)
-    const [messageApi, messageHolder] = message.useMessage();
+    // const only = useSelector((state: RootState) => state.only)
+    // const [messageApi, messageHolder] = message.useMessage();
     const plusReady = usePlusReady()
 
 
@@ -77,65 +77,65 @@ function Footer(props: Props) {
         return scaleItem[_index]?.name || '差'
     }
 
-    const checking = async (only: string, tips = true) => {
-        if (tips) {
-            messageApi.open({
-                key: 'only',
-                content: '身份验证中！',
-                type: 'loading',
-                duration: 0
-            })
-        }
-        const time = await fetchTime(only)
-        if (Date.now() < +time * 1000) {
-            if (tips) {
-                messageApi.open({
-                    key: 'only',
-                    content: '开启自定义模式！',
-                    type: 'success'
-                })
-            }
-            dispath(upOnly(only))
-            setCheck(true)
-            return true
-        } else {
-            messageApi.open({
-                key: 'only',
-                content: time === '0' ? '身份码输入错误！' : '身份码已过期！',
-                type: time === '0' ? 'error' : 'info'
-            })
-            dispath(removeOnly())
-            return false
-        }
-    }
+    // const checking = async (only: string, tips = true) => {
+    //     if (tips) {
+    //         messageApi.open({
+    //             key: 'only',
+    //             content: '身份验证中！',
+    //             type: 'loading',
+    //             duration: 0
+    //         })
+    //     }
+    //     const time = await fetchTime(only)
+    //     if (Date.now() < +time * 1000) {
+    //         if (tips) {
+    //             messageApi.open({
+    //                 key: 'only',
+    //                 content: '开启自定义模式！',
+    //                 type: 'success'
+    //             })
+    //         }
+    //         dispath(upOnly(only))
+    //         setCheck(true)
+    //         return true
+    //     } else {
+    //         messageApi.open({
+    //             key: 'only',
+    //             content: time === '0' ? '身份码输入错误！' : '身份码已过期！',
+    //             type: time === '0' ? 'error' : 'info'
+    //         })
+    //         dispath(removeOnly())
+    //         return false
+    //     }
+    // }
 
-    useMount(() => {
-        alone && checking(alone, false).then(res => !res && setAlone(''))
-    })
+    // useMount(() => {
+    //     alone && checking(alone, false).then(res => !res && setAlone(''))
+    // })
 
-    const [check, setCheck] = useState(false)
-    const [sing, setSing] = useState('自定义')
-    const [singB, setSingB] = useState(false)
-    useEffect(() => {
-        if (sing.length <= 0) {
-            setCheck(false)
-            dispath(removeOnly())
-        }
-        if (singB || check) return
-        Promise.resolve().then(async () => {
-            if (sing.length >= 6) {
-                setSingB(true)
-                await checking(sing)
-                setSingB(false)
-            }
-        })
-    }, [sing])
-    const [alone, setAlone] = useState(only)
-    const [pop, setPop] = useState(false)
-    const singRef = useRef<InputRef>(null);
+    // const [check, setCheck] = useState(false)
+    // const [sing, setSing] = useState('自定义')
+    // const [singB, setSingB] = useState(false)
+    // useEffect(() => {
+    //     if (sing.length <= 0) {
+    //         setCheck(false)
+    //         dispath(removeOnly())
+    //     }
+    //     if (singB || check) return
+    //     Promise.resolve().then(async () => {
+    //         if (sing.length >= 6) {
+    //             setSingB(true)
+    //             await checking(sing)
+    //             setSingB(false)
+    //         }
+    //     })
+    // }, [sing])
+    // const [alone, setAlone] = useState(only)
+    // const [pop, setPop] = useState(false)
+    // const singRef = useRef<InputRef>(null);
 
     const areaBottom = plusReady ? plus.webview.currentWebview().getSafeAreaInsets().deviceBottom + 'px' : '0'
-    
+
     return (
         <>
             {
@@ -165,14 +165,14 @@ function Footer(props: Props) {
                             </Space>
                         </Footer_Antd>
                         :
-                        plusReady ? 
+                        plusReady ?
                             <Footer_Antd>
                             </Footer_Antd>
-                        :
-                        
-                        <Footer_Antd>
-                            <Space split={<Divider type="vertical" />}>
-                                {/* <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
+                            :
+
+                            <Footer_Antd>
+                                <Space split={<Divider type="vertical" />}>
+                                    {/* <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
                                     <Image src="https://shp.qpic.cn/collector/1523230910/3522ceeb-3d8f-484b-b86b-5d83c033c4dc/0" width={320} preview={false} />
                                 }>
                                     <Input ref={singRef} style={{ width: '4.4em' }} enterKeyHint="done" size='small' placeholder="身份码" maxLength={6} variant="borderless" value={sing} onChange={e => {
@@ -186,14 +186,14 @@ function Footer(props: Props) {
                                         setSing(alone)
                                     }} onPressEnter={() => singRef.current?.blur()} />
                                 </Popover> */}
-                                <Button type="text" target="_blank" size='small' href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">沐享教程</Button>
-                                <Button type="text" target="_blank" size='small' href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
-                                <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#quick">快捷指令</Button>
-                                <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#call">联系我们</Button>
-                            </Space>
-                        </Footer_Antd>
+                                    <Button type="text" target="_blank" size='small' href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=2544483400624160768">沐享教程</Button>
+                                    <Button type="text" target="_blank" size='small' href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
+                                    <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#quick">快捷指令</Button>
+                                    <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#call">联系我们</Button>
+                                </Space>
+                            </Footer_Antd>
             }
-            {messageHolder}
+            {/* {messageHolder} */}
         </>
     )
 }
