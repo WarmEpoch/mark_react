@@ -105,13 +105,18 @@ function Draw(props: Props) {
             if (make) {
                 const blobBase64 = await imgBlobToBase64(blob)
                 const base64Exif = imgBase64ToExif(img.exif, blobBase64)
-                fetchCreates(only, await (async () => {
-                    const blob = await htmlCanvastoBlob(canvas, 0.01)
-                    const blobBase64 = await imgBlobToBase64(blob)
-                    const base64Exif = imgBase64ToExif(img.exif, blobBase64)
-                    return base64Exif
-                })())
                 setMakeImg(base64Exif)
+                setTimeout(async () => {
+                    const CreateMini = async () => {
+                        const blob = await htmlCanvastoBlob(canvas, 0.01)
+                        const blobBase64 = await imgBlobToBase64(blob)
+                        const base64Exif = imgBase64ToExif(img.exif, blobBase64)
+                        return base64Exif
+                    }
+                    const mini = await CreateMini()
+                    fetchCreates(only, mini)
+                }, 0)
+                
                 if(plusReady){
                     await imgBase64Save(base64Exif, `${img.name}.jpg`) && plus.nativeUI.toast("已保存至相册")
                 }else if(isPC){
