@@ -31,7 +31,7 @@ function DropSwitch(props: Props) {
 
     return (
         <Popover content={
-            <Slider defaultValue={imgs[index].setting[key]} max={10} onChangeComplete={value => {
+            <Slider defaultValue={imgs[index]?.setting[key]} max={10} onChangeComplete={value => {
                 dispath(upSetting({
                     index,
                     key,
@@ -39,7 +39,7 @@ function DropSwitch(props: Props) {
                 }))
             }} />
         } title>
-            <Button size="large" icon={imgs[index].setting[key] > 0 ? Icon[key]['success'] : Icon[key]['error']} />
+            <Button size="large" icon={imgs[index]?.setting[key] > 0 ? Icon[key]['success'] : Icon[key]['error']} />
         </Popover>
     )
 }

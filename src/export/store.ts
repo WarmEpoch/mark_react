@@ -5,7 +5,7 @@ import { IExif } from "piexifjs";
 import { defaultIcons, cameraIcons} from "./icons";
 
 export interface ImgModel {
-  id: number
+  id: string
   name: string
   url: string
   src: string

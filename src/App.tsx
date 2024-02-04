@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import { Suspense, useEffect, useState } from "react"
 import { Button, Dropdown, Layout, Upload, message, Space, Spin } from "antd";
-import type { UploadProps } from 'antd';
+import type { GetProp, UploadProps } from 'antd';
 const { Header } = Layout;
 import { createFromIconfontCN, DownOutlined } from "@ant-design/icons"
 import { routesConfig, routesItems } from "./export/router"
@@ -17,7 +17,7 @@ import { imgBase64LoadExif } from './export/piexif';
 import { useSelector } from 'react-redux';
 import { usePlusReady } from './export/state';
 import { CanvasMaxSize } from './export/canvas';
-import { useMount } from 'ahooks';
+import { useMount, useRequest } from 'ahooks';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: 'https://at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
@@ -38,7 +38,7 @@ function App() {
   const routesItem = useRoutesItem(pathname)
 
   const dispath = useAppDispatch()
-  
+
   useMount(async () => {
     const { maxArea, maxHeight, maxWidth, extent } = await CanvasMaxSize()
     dispath(setCanvasMax({
@@ -50,17 +50,15 @@ function App() {
   })
 
   const plusReady = usePlusReady()
-  
+
   const [messageApi, contextHolder] = message.useMessage();
-  
+
   const GetElementName = (id: string | undefined) => {
-    const index = routesItems.findIndex(item => item.key === id)
-    return routesItems[index].name || '敬请期待'
+    return routesItems.find(item => item.key === id)?.name || '敬请期待'
   }
 
   const GetSetting = (id: string | undefined) => {
-    const index = routesConfig.findIndex(item => item.path === id)
-    return routesConfig[index].setting || {
+    return routesConfig.find(item => item.path === id)?.setting || {
       border: 0,
       shadow: 0
     }
@@ -78,24 +76,29 @@ function App() {
     const S = (Date.getSeconds() + '').padStart(2, '0');
     return `${Y}.${M}.${D} ${H}:${Mi}:${S}`
   }
-  const [loading, setLoading] = useState(false)
-  
-  const UploadProps: UploadProps = {
-    beforeUpload: async (file) => {
 
-      setLoading(true)
-      const id = file.lastModified + file.size
-      const _index = imgs.findIndex(img => img.id == id)
-      if (_index >= 0) {
+  const [loading, setLoading] = useState(false)
+
+  type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+  const Uploading = async (fileList: FileType[]) => {
+    setLoading(true)
+    for(const file of fileList){
+      const id = file.name + file.size
+      
+      const _idIndex = imgs.findIndex(img => img.id == id)
+      if (_idIndex >= 0) {
         messageApi.warning('该图片已上传')
         setLoading(false)
-        return false;
+        // return false;
+        break
       }
       const output = await parse(file).catch(() => false)
       if (!output) {
         messageApi.warning('图像不规范')
         setLoading(false)
-        return false
+        // return false
+        break
       }
       const blob: Blob = await heic2any({
         blob: file,
@@ -110,16 +113,6 @@ function App() {
       const resizeHeic = await imageResize(heic, 1080, 0.8)
 
       const { width: urlWidth, height: urlHeight } = await imageDomSize(heic)
-
-      // const isValidCanvas = canvasMax.maxHeight >= urlHeight && canvasMax.maxWidth >= urlWidth && canvasMax.maxArea >= urlHeight * urlWidth
-
-      // const canvaScale = isValidCanvas && 100 || (() => {
-      //   if(canvasMax.extent){
-      //     return Math.floor(urlWidth > urlHeight ? canvasMax.maxWidth / urlWidth * 100 : canvasMax.maxHeight / urlHeight * 100)
-      //   }else{
-      //     return Math.floor(Math.sqrt(canvasMax.maxArea / urlHeight / urlWidth) * 100)
-      //   }
-      // })()
 
       dispath(addImg({
         id: id,
@@ -146,21 +139,30 @@ function App() {
         exif: imgBase64LoadExif(fileBase64),
         setting: GetSetting(pathname)
       }))
-      
-      setLoading(false)
+    }
+    setLoading(false)
+  }
 
+  const { run: UploadRun } = useRequest(Uploading, {
+    debounceWait: 1000,
+    manual: true,
+  });
+
+  const UploadProps: UploadProps = {
+    beforeUpload: (_file, fileList) => {
+      UploadRun(fileList)
       return false
     },
     showUploadList: false,
     multiple: true,
     disabled: loading,
   }
-  
+
   return (
     <>
-      { contextHolder }
-      <Header style={{ paddingTop: plusReady ? plus.navigator.getStatusbarHeight() : '0'}}>
-        <Button type='link' href="/" style={{width: 'unset'}} icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} />
+      {contextHolder}
+      <Header style={{ paddingTop: plusReady ? plus.navigator.getStatusbarHeight() : '0' }}>
+        <Button type='link' href="/" style={{ width: 'unset' }} icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} />
         <Dropdown menu={{ items: routesItem }} placement="bottom" trigger={['click']} disabled={make}>
           <Button>{GetElementName(pathname)}<DownOutlined /></Button>
         </Dropdown>
