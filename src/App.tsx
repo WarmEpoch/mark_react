@@ -144,7 +144,7 @@ function App() {
   }
 
   const { run: UploadRun } = useRequest(Uploading, {
-    debounceWait: 1000,
+    debounceWait: 200,
     manual: true,
   });
 
