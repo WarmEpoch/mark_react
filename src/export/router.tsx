@@ -61,7 +61,14 @@ const routesConfig = [
       border: 0,
       shadow: 0,
     }
-  }
+  },{
+    path: '/dragon',
+    name: '龙行龘龘',
+    setting: {
+      border: 0,
+      shadow: 0,
+    }
+  },
 ]
 
 const routesItems = Object.entries(pageTsx).map(([path]) => {

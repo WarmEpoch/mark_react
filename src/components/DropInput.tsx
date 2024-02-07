@@ -11,6 +11,7 @@ function DropInput(props: Props) {
     const imgs = useSelector((state: RootState) => state.imgs)
     const index = useSelector((state: RootState) => state.index)
     const reveals = useSelector((state: RootState) => state.reveals)
+    const fuks = ['龙年大吉 万事如意', '龙行龘龘 前程朤朤', '祥龙昂首 鸿运当头', '龙腾四海 财源广进', '龙年吉祥 幸福安康', '龙行天下 前程似锦', '龙跃九天 步步高升', '龙腾盛世 喜迎春来', '烟火年年 岁岁平安', '龙腾虎跃 年年有余' ]
     const dispath = useAppDispatch()
 
     const items: MenuProps['items'] = (() => {
@@ -27,8 +28,28 @@ function DropInput(props: Props) {
         }] || []), {
             key: 'Default',
             label: '默认参数',
-            type: 'group',
+            type: 'divider',
             children: Object.entries(imgs[index]?.exifr || []).filter(val => {
+                return Array.isArray(val[1]) ? false : Boolean(val[1])
+            }).map(item => {
+                return {
+                    key: item[0],
+                    label: <a onClick={e => {
+                        e.preventDefault()
+                        dispath(upReveal({
+                            index,
+                            key,
+                            value: item[1]?.toString()
+                        }))
+                    }}>{item[1]}</a>,
+                    disabled: item[1] === imgs[index]?.reveals[key]
+                }
+            })
+        }, {
+            key: 'Fuks',
+            label: '福到啦',
+            type: 'divider',
+            children: Object.entries(fuks).filter(val => {
                 return Array.isArray(val[1]) ? false : Boolean(val[1])
             }).map(item => {
                 return {
@@ -47,7 +68,7 @@ function DropInput(props: Props) {
         }, ...(reveals.length && [{
             key: 'Reveals',
             label: '自定义参数',
-            type: 'group',
+            type: 'divider',
             children: Object.entries(reveals).map(reveal => {
                 return {
                     key: reveal[0],

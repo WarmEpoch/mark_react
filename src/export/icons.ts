@@ -20,6 +20,10 @@ const _defaultIcons: Icons[] = [
         name: '三星',
         val: 'samsung',
     },
+    {
+        name: '福到啦',
+        val: 'fuk',
+    },
 ]
 
 const _cameraIcons: Icons[] = [

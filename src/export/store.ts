@@ -25,8 +25,9 @@ export interface ImgModel {
     LongitudeRef: string | undefined
     LensModel:    string | undefined
     LensMake:     string | undefined
-    parm?:         string | undefined
-    locate?:       string | undefined
+    parm?:        string | undefined
+    locate?:      string | undefined
+    fuk?:         string | undefined
   },
   exif: IExif | undefined,
   setting: {
@@ -51,6 +52,7 @@ const imgService = createSlice({
     addImg(state, action: PayloadAction<ImgModel>) {
       action.payload.exifr.locate = `${action.payload.exifr.LatitudeRef} ${action.payload.exifr.LongitudeRef}`.replace(/undefined/g,'').trim() || void 0
       action.payload.exifr.parm = `${action.payload.exifr.Focal} ${action.payload.exifr.Fnumber} ${action.payload.exifr.Exposure} ${action.payload.exifr.Iso}`.replace(/undefined/g,'').trim()
+      action.payload.exifr.fuk = '龙行龘龘，前程朤朤'
       const _rImgModel = Object.assign(action.payload, {
         reveals: {
           ...action.payload.exifr,

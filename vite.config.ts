@@ -22,7 +22,7 @@ export default (({ command }) => {
       legacy({
         targets: ['defaults'],
       }),
-      visualizer({open: true}),
+      // visualizer({open: true}),
       externalGlobals({
         // heic2any: "heic2any",
         // "@wtto00/html2canvas": "html2canvas",
