@@ -11,6 +11,7 @@ const routesConfig = [
     setting: {
       border: 0,
       shadow: 0,
+      color: '#ffffff'
     }
   }, {
     path: '/frame',
@@ -18,6 +19,7 @@ const routesConfig = [
     setting: {
       border: 0,
       shadow: 0,
+      color: '#ffffff'
     }
   }, {
     path: '/jamb',
@@ -25,6 +27,7 @@ const routesConfig = [
     setting: {
       border: 3,
       shadow: 0,
+      color: '#ffffff'
     }
   }, {
     path: '/flag',
@@ -32,6 +35,7 @@ const routesConfig = [
     setting: {
       border: 4,
       shadow: 0,
+      color: '#ffffff'
     }
   }, {
     path: '/gins',
@@ -39,6 +43,7 @@ const routesConfig = [
     setting: {
       border: 3,
       shadow: 0,
+      color: '#ffffff'
     }
   }, {
     path: '/centre',
@@ -46,6 +51,7 @@ const routesConfig = [
     setting: {
       border: 0,
       shadow: 0,
+      color: '#ffffff'
     }
   }, {
     path: '/morn',
@@ -53,6 +59,7 @@ const routesConfig = [
     setting: {
       border: 4,
       shadow: 0,
+      color: '#ffffff'
     }
   }, {
     path: '/xmage',
@@ -60,13 +67,15 @@ const routesConfig = [
     setting: {
       border: 0,
       shadow: 0,
+      color: '#ffffff'
     }
   },{
-    path: '/dragon',
+    path: '/loong',
     name: '龙行龘龘',
     setting: {
       border: 0,
       shadow: 0,
+      color: '#ae1a11'
     }
   },
 ]

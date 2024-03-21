@@ -33,6 +33,7 @@ export interface ImgModel {
   setting: {
     border: number
     shadow: number
+    color: string
   }
 }
 
@@ -80,7 +81,7 @@ const imgService = createSlice({
       state[_index].maxScale = value
       state[_index].scale > value && (state[_index].scale = value)
     },
-    upSetting(state: RImgModel[], action: PayloadAction<{ index: number, key: keyof RImgModel['setting'], value: number}>){
+    upSetting(state: RImgModel[], action: PayloadAction<{ index: number, key: keyof RImgModel['setting'], value: never }>){
       const {index, key, value} = action.payload
       state[index].setting[key] = value
     },

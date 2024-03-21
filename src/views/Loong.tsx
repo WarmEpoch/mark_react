@@ -7,11 +7,11 @@ import DropIcon from "../components/DropIcon";
 import Footer from "../components/Footer";
 
 const bottom = {
-  vertical: 'https://web.immers.icu/assets/bottom/mi_dragon_vertical.png',
-  horizontal: 'https://web.immers.icu/assets/bottom/mi_dragon_horizontal.png',
+  vertical: 'https://web.immers.icu/assets/bottom/mi_long_vertical.png',
+  horizontal: 'https://web.immers.icu/assets/bottom/mi_long_horizontal.png',
 }
 
-function Dragon() {
+function Long() {
   const imgs = useSelector((state: RootState) => state.imgs)
   return (
     <>
@@ -41,4 +41,4 @@ function Dragon() {
   )
 }
 
-export default Dragon
+export default Long

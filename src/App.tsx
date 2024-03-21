@@ -60,7 +60,8 @@ function App() {
   const GetSetting = (id: string | undefined) => {
     return routesConfig.find(item => item.path === id)?.setting || {
       border: 0,
-      shadow: 0
+      shadow: 0,
+      color: '#ffffff'
     }
   }
 

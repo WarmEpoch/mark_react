@@ -84,7 +84,7 @@ function Draw(props: Props) {
             const canvas = createCanvas(canvasWidth, canvasHeight)
             canvas.transferControlToOffscreen
             const context = canvas.getContext('2d') as CanvasRenderingContext2D
-            context.fillStyle = "#ffffff";
+            context.fillStyle = img.setting.color;
             context.fillRect(0, 0, canvasWidth, canvasHeight);
             if(img.setting.shadow > 0){
                 context.shadowColor = 'rgba(0,0,0,0.4)'
