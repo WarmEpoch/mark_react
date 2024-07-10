@@ -190,6 +190,7 @@ function Footer(props: Props) {
                                     <Button type="text" target="_blank" size='small' href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3MTgwNzU0NA==&action=getalbum&album_id=3054840868278583296#wechat_redirect">水印手册</Button>
                                     <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#quick">快捷指令</Button>
                                     <Button type="text" target="_blank" size='small' href="https://www.immers.icu/#call">联系我们</Button>
+                                    <Button type="text" target="_blank" size='small' href="https://github.com/WarmEpoch/mark_react">开源代码</Button>
                                 </Space>
                             </Footer_Antd>
             }
