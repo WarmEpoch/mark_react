@@ -33,7 +33,7 @@ npm run dev
 
 ## 许可证
 
-本项目使用GPL协议。请参阅[LICENSE](https://chatglm.cn/main/LICENSE)文件了解更多信息。
+本项目使用GPL协议。请参阅[LICENSE](/LICENSE)文件了解更多信息。
 
 ## 作者
 
