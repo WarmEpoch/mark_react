@@ -3,11 +3,7 @@ import { useEffect, useState } from "react"
 export const usePlusReady = () => {
     const [state, setState] = useState(false)
     useEffect(() => {
-        try {
-            setState(!!plus)
-        } catch {
-            setState(false)
-        }
+        setState((typeof plus) !== 'undefined')
     }, [])
     return state
 }

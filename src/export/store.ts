@@ -14,22 +14,22 @@ export interface ImgModel {
   scale: number
   maxScale: number
   exifr: {
-    Make:         string | undefined
-    Model:        string | undefined
-    Focal:        string | undefined
-    Time:         string | undefined
-    Iso:          number | undefined
-    Fnumber:      string | undefined
-    Exposure:     string | undefined
-    LatitudeRef:  string | undefined
-    LongitudeRef: string | undefined
-    LensModel:    string | undefined
-    LensMake:     string | undefined
-    parm?:        string | undefined
-    locate?:      string | undefined
-    fuk?:         string | undefined
+    Make?:         string
+    Model?:        string
+    Focal?:        string
+    Time?:         string
+    Iso?:          string
+    Fnumber?:      string
+    Exposure?:     string
+    LatitudeRef?:  string
+    LongitudeRef?: string
+    LensModel?:    string
+    LensMake?:     string
+    parm?:         string
+    locate?:       string
+    fuk?:          string
   },
-  exif: IExif | undefined,
+  exif?: IExif,
   setting: {
     border: number
     shadow: number
@@ -40,7 +40,7 @@ export interface ImgModel {
 export interface RImgModel extends ImgModel {
   reveals: {
     icon: string
-    filter: string | undefined
+    filter?: string
   } & ImgModel['exifr']
 }
 

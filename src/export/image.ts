@@ -1,7 +1,8 @@
-export const imageDom = (url: string): Promise<HTMLImageElement> => {
+export const imageDom = (url: string, crossorigin = false): Promise<HTMLImageElement> => {
     return new Promise((resolve) => {
         const img = new Image()
         img.onload = () => resolve(img)
+        if(crossorigin) img.crossOrigin = 'anonymous'
         img.src = url
     })
 }
@@ -84,3 +85,23 @@ export const imgBase64Save = (base64: string, name: string): Promise<boolean> =>
         }, () => resolve(false))
     })
 }
+
+export const base64ToFile = (base64Data: string, filename: string) => {
+    // 将Base64字符串拆分为数据部分和MIME类型
+    const byteString = atob(base64Data.split(',')[1]);
+    
+    // 创建一个包含二进制数据的数组
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+  
+    // 创建Blob对象
+    const blob = new Blob([ab], { type: 'image/jpeg' }); // 这里假设是jpeg图片，根据实际情况修改MIME类型
+  
+    // 创建File对象
+    const file = new File([blob], filename, { type: 'image/jpeg' });
+  
+    return file;
+  }

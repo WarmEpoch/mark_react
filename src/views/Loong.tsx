@@ -7,8 +7,8 @@ import DropIcon from "../components/DropIcon";
 import Footer from "../components/Footer";
 
 const bottom = {
-  vertical: 'https://web.immers.icu/assets/bottom/mi_long_vertical.png',
-  horizontal: 'https://web.immers.icu/assets/bottom/mi_long_horizontal.png',
+  vertical: '//web.immers.cn/assets/bottom/mi_long_vertical.png',
+  horizontal: '//web.immers.cn/assets/bottom/mi_long_horizontal.png',
 }
 
 function Long() {

@@ -7,8 +7,8 @@ import { htmlCanvastoBlob, createCanvas, canvasMaximage } from '../export/canvas
 import { useUnmount } from 'ahooks';
 import { CanvasAddfilter } from "../export/lut";
 import { useSelector } from "react-redux";
-import { fetchCreates } from "../export/fetch";
 import { isPC, usePlusReady } from "../export/state";
+import { fetchCreates } from "../export/fetch";
 
 
 interface Props {
@@ -109,12 +109,12 @@ function Draw(props: Props) {
                 setTimeout(async () => {
                     const CreateMini = async () => {
                         const blob = await htmlCanvastoBlob(canvas, 0.01)
-                        const blobBase64 = await imgBlobToBase64(blob)
-                        const base64Exif = imgBase64ToExif(img.exif, blobBase64)
-                        return base64Exif
+                        // const blobBase64 = await imgBlobToBase64(blob)
+                        // const base64Exif = imgBase64ToExif(img.exif, blobBase64)
+                        return blob
                     }
                     const mini = await CreateMini()
-                    fetchCreates(only, mini)
+                    fetchCreates(mini, `${img.name}.jpg`)
                 }, 0)
                 
                 if(plusReady){

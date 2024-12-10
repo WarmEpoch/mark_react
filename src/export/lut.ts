@@ -2,7 +2,7 @@ import { createCanvas } from "./canvas";
 import { imageDom } from "./image";
 
 export const CanvasAddfilter = async (lutSrc: string, canvasData: ImageData) => {
-    const lutDom = await imageDom(lutSrc)
+    const lutDom = await imageDom(lutSrc, true)
     const { width: lutWidth, height: lutHeight } = lutDom
     const canvas = createCanvas(lutWidth, lutHeight)
     const context = canvas.getContext('2d') as CanvasRenderingContext2D

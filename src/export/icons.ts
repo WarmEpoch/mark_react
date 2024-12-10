@@ -6,91 +6,91 @@ interface Icons {
 const _defaultIcons: Icons[] = [
     {
         name: '沐享',
-        val: 'logo',
+        val: 'immers/logo',
     },
     {
         name: '大疆',
-        val: 'dji',
+        val: 'icon/dji',
     },
     {
         name: 'FotorGear',
-        val: 'fotorgear',
+        val: 'icon/fotorgear',
     },
     {
         name: '三星',
-        val: 'samsung',
+        val: 'icon/samsung',
     },
     {
         name: '福到啦',
-        val: 'fuk',
+        val: 'icon/fuk',
     },
 ]
 
 const _cameraIcons: Icons[] = [
     {
         name: '徕卡',
-        val: 'leica',
+        val: 'icon/leica',
     },
     {
         name: '哈苏',
-        val: 'hasselblad',
+        val: 'icon/hasselblad',
     },
     {
         name: '阿莱',
-        val: 'arri',
+        val: 'icon/arri',
     },
     {
         name: '蔡司',
-        val: 'zeiss',
+        val: 'icon/zeiss',
     },
     {
         name: '富士',
-        val: 'fujifilm',
+        val: 'icon/fujifilm',
     },
     {
         name: '索尼',
-        val: 'sony',
+        val: 'icon/sony',
     },
     {
         name: '佳能',
-        val: 'canon',
+        val: 'icon/canon',
     },
     {
         name: '尼康',
-        val: 'nikon',
+        val: 'icon/nikon',
         describe: "NIKON CORPORATION"
     },
     {
         name: '宾得',
-        val: 'pentax',
+        val: 'icon/pentax',
     },
     {
         name: '苹果',
-        val: 'apple',
+        val: 'icon/apple',
     },
     {
         name: '金尼康',
-        val: 'nikons',
+        val: 'icon/nikons',
     },
     {
         name: '奥林巴斯',
-        val: 'olympus',
+        val: 'icon/olympus',
     },
     {
         name: 'SIGMA',
-        val: 'sigma',
+        val: 'icon/sigma',
     },
     {
         name: 'RICOH',
-        val: 'ricoh',
+        val: 'icon/ricoh',
     },
     {
         name: 'Lumix',
-        val: 'lumix',
+        val: 'icon/lumix',
     },
     {
         name: 'TAMRON',
-        val: 'tamron',
+        val: 'icon/tamron',
     },
 ]
 
@@ -98,7 +98,7 @@ const Icons = (icons: Icons[]) => icons.map(icon => {
     return {
         name: icon['name'],
         describe: (icon['describe'] || icon['val']).toLocaleLowerCase(),
-        val: `https://web.immers.icu/assets/icon/${icon['val']}.svg`,
+        val: `//web.immers.cn/assets/${icon['val']}.svg`,
     }
 })
 

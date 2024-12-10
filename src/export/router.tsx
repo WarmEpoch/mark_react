@@ -1,4 +1,4 @@
-import { Navigate, Link, createHashRouter, RouteObject } from 'react-router-dom'
+import { Navigate, Link, RouteObject, createBrowserRouter, createHashRouter } from 'react-router-dom'
 import { ComponentType, lazy } from 'react'
 import App from '../App'
 
@@ -101,8 +101,8 @@ const subRoutes: RouteObject[] = Object.entries(pageTsx).map(([path, tsx]) => {
   }
 })
 
-// const router = createBrowserRouter([
-const router = createHashRouter([
+const createRouter = import.meta.env.MODE == 'app' ? createHashRouter : createBrowserRouter
+const router = createRouter([
   {
     path: "/",
     element: <Navigate to="mi" replace />,

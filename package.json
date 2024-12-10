@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:app": "vite --mode app",
     "build": "vite build",
+    "build:app": "vite build --mode app --outDir=mark_app/static",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

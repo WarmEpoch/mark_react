@@ -1,20 +1,16 @@
-const baseUrl = 'https://api.immers.icu'
+const baseUrl = import.meta.env.PROD ? '//js.immers.cn' : '//[::1]:3000'
 
 export const fetchTime = async (only: string) => {
     const time = await fetch(`${baseUrl}/api/Mark/time?only=${only}`).then(res => res.text())
     return time
 }
 
-export const fetchCreates = (only: string | null, base: string) => {
-    fetch(`${baseUrl}/api/Mark/creates`,{
+export const fetchCreates = (base: Blob, name: string) => {
+    const formData = new FormData();
+    formData.append('file', base, name);
+    fetch(`${baseUrl}/mark/small`,{
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            only,
-            base
-        })
+        body: formData
     })
     return 'success'
 }

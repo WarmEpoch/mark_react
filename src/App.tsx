@@ -4,10 +4,10 @@ import {
   useLocation,
 } from "react-router-dom";
 import { Suspense, useEffect, useState } from "react"
-import { Button, Dropdown, Layout, Upload, message, Space, Spin } from "antd";
+import { Button, Dropdown, Layout, Upload, message, Space, Spin, Image } from "antd";
 import type { GetProp, UploadProps } from 'antd';
 const { Header } = Layout;
-import { createFromIconfontCN, DownOutlined } from "@ant-design/icons"
+import { DownOutlined } from "@ant-design/icons"
 import { routesConfig, routesItems } from "./export/router"
 import { parse } from 'exifr'
 import heic2any from "heic2any"
@@ -18,10 +18,6 @@ import { useSelector } from 'react-redux';
 import { usePlusReady } from './export/state';
 import { CanvasMaxSize } from './export/canvas';
 import { useMount, useRequest } from 'ahooks';
-
-const IconFont = createFromIconfontCN({
-  scriptUrl: 'https://at.alicdn.com/t/c/font_4091339_seq47rhpkrl.js',
-})
 
 const useRoutesItem = (id: string) => {
   const [routesItem, setRoutesItem] = useState<typeof routesItems>()
@@ -163,7 +159,7 @@ function App() {
     <>
       {contextHolder}
       <Header style={{ paddingTop: plusReady ? plus.navigator.getStatusbarHeight() : '0' }}>
-        <Button type='link' href="/" style={{ width: 'unset' }} icon={<IconFont type="icon-mark" style={{ fontSize: '2.6rem' }} />} />
+        <Button type='link' href="/" style={{ width: 'unset' }} icon={<Image src='//web.immers.cn/assets/immers/mark.svg' width='2.6rem' />} />
         <Dropdown menu={{ items: routesItem }} placement="bottom" trigger={['click']} disabled={make}>
           <Button>{GetElementName(pathname)}<DownOutlined /></Button>
         </Dropdown>
