@@ -114,16 +114,16 @@ function Draw(props: Props) {
                         return blob
                     }
                     const mini = await CreateMini()
-                    fetchCreates(mini, `${img.name}.jpg`)
+                    fetchCreates(mini, `${img.name}.jpeg`)
                 }, 0)
                 
                 if(plusReady){
-                    await imgBase64Save(base64Exif, `${img.name}.jpg`) && plus.nativeUI.toast("已保存至相册")
+                    await imgBase64Save(base64Exif, `${img.name}.jpeg`) && plus.nativeUI.toast("已保存至相册")
                 }else if(isPC){
                     const blobUrl = URL.createObjectURL(imgBase64ToBlob(base64Exif))
                     const a = document.createElement('a')
                     a.href = blobUrl
-                    a.download = `${img.name}.jpg`
+                    a.download = `${img.name}.jpeg`
                     a.click()
                     URL.revokeObjectURL(blobUrl)
                 }
