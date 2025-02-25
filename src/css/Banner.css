@@ -1,20 +1,20 @@
-.slick-track{
+main .slick-track{
   height: 60vh;
 }
 
-.slick-slide{
+main .slick-slide{
   position: relative;
   height: 100%;
 }
 
-.slick-slide>div{
+main .slick-slide>div{
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
 }
 
-.slick-slide img{
+main .slick-slide img{
     object-fit: contain;
     height: 100%;
 }

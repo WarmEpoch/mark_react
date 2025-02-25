@@ -1,0 +1,48 @@
+.toggle-container {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+}
+.toggle-container img{
+  object-fit: contain;
+}
+.toggle-list {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 60vh;
+}
+.toggle-list::before {
+  content: "";
+}
+.toggle-item {
+  flex: 0 0 100%;
+  display: flex;
+}
+
+
+.toggle-indicator {
+  position: absolute;
+  top: 2%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+.toggle-indicator-item {
+  width: 2rem;
+  height: 0.35rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  cursor: pointer;
+}
+
+.toggle-indicator-item.active {
+  background-color: rgba(255, 255, 255);
+  cursor: default;
+}

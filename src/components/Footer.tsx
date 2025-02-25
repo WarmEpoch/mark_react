@@ -1,81 +1,21 @@
-import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Divider, Dropdown, Layout, Space } from "antd"; // Input,Popover,message, Image
-import type { MenuProps } from 'antd'; //InputRef,
-import { RootState, removeImg, upScale, useAppDispatch } from "../export/store"; //, removeOnly, upOnly
-import { useSelector } from "react-redux";
-import { ReactNode } from "react"; //, useEffect, useRef, useState
-import DropFilter from "./DropFilter";
-// import { useMount } from "ahooks";
-// import { fetchTime } from "../export/fetch";
-import DropSwitch from "./DropSwitch";
+import { Button, Divider, Layout, Space } from "antd"; // Input,Popover,message, Image
+import { imgsAtom, makeAtom } from "../export/store"; //, removeOnly, upOnly
 import { usePlusReady, isPC } from "../export/state";
+import { useAtomValue } from "jotai";
 
 const { Footer: Footer_Antd } = Layout;
-interface Props {
-    children: ReactNode
-}
 
-function Footer(props: Props) {
-    const { children } = props
-    const dispath = useAppDispatch()
-    const index = useSelector((state: RootState) => state.index)
-    const imgs = useSelector((state: RootState) => state.imgs)
-    const make = useSelector((state: RootState) => state.make)
-    // const only = useSelector((state: RootState) => state.only)
+function Footer() {
+    // const dispath = useAppDispatch()
+    // const index = useSelector((state: RootState) => state.index)
+    // const index = useAtomValue(indexAtom)
+    const imgs = useAtomValue(imgsAtom)
+    const make = useAtomValue(makeAtom)
+    
+    // const only = useSelector((state: RootState) => state.only)s
     // const [messageApi, messageHolder] = message.useMessage();
     const plusReady = usePlusReady()
 
-
-    const scaleItem = [
-        {
-            value: 100,
-            name: '原',
-            key: 'max'
-        },
-        {
-            value: 75,
-            name: '高',
-            key: 'large'
-        },
-        {
-            value: 50,
-            name: '中',
-            key: 'middle'
-        },
-        {
-            value: 25,
-            name: '低',
-            key: 'small'
-        }
-    ]
-
-    const scaleItems = (maxScale: number, scale: number): MenuProps['items'] => {
-        return scaleItem.map((item, i) => {
-            if (maxScale < item.value) {
-                item.value = maxScale
-                if (scaleItem[i - 1]?.value == maxScale) {
-                    return null
-                }
-            }
-            return {
-                key: item.key,
-                label: <a onClick={e => {
-                    e.preventDefault()
-                    dispath(upScale({
-                        id: imgs[index].id,
-                        value: item.value
-                    }))
-                }}>{item.name}</a>,
-                disabled: item.value === scale,
-                value: item.value
-            }
-        })
-    }
-
-    const GetScaleName = (scale: number) => {
-        const _index = scaleItem.findIndex(val => val.value <= scale)
-        return scaleItem[_index]?.name || '差'
-    }
 
     // const checking = async (only: string, tips = true) => {
     //     if (tips) {
@@ -134,43 +74,44 @@ function Footer(props: Props) {
     // const [pop, setPop] = useState(false)
     // const singRef = useRef<InputRef>(null);
 
-    const areaBottom = plusReady ? plus.webview.currentWebview().getSafeAreaInsets().deviceBottom + 'px' : '0'
+    // const areaBottom = plusReady ? plus.webview.currentWebview().getSafeAreaInsets().deviceBottom + 'px' : '0'
 
     return (
-        <>
-            {
-                make ?
-                    <Footer_Antd>
+        <Footer_Antd>
+            <div onWheel={(e) => {
+                e.currentTarget.scrollLeft += e.deltaY;
+            }} style={{ overflow: 'auto', margin: 'auto' }}>
+                {
+                    make ?
                         <Space>
                             Tips：{plusReady ? 'App会自动为您保存到相册！' : `${isPC ? '右键保存，有误请更换浏览器。' : '长按保存，推荐使用夸克浏览器。'}`}
                         </Space>
-                    </Footer_Antd>
                     :
                     imgs.length > 0 ?
-                        <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }} style={{ paddingBottom: `calc(${areaBottom} + 1rem)` }}>
-                            <Space>
-                                <Button size="large" onClick={() => dispath(removeImg(index))} danger icon={<DeleteOutlined />} />
-                                <Dropdown menu={{ items: scaleItems(imgs[index]?.maxScale, imgs[index]?.scale) }}>
-                                    <Button size="large">{GetScaleName(imgs[index]?.scale)}</Button>
-                                </Dropdown>
-                                <DropFilter name="filter" />
-                                <DropSwitch name="border" />
-                                <DropSwitch name="shadow" />
-                                {children}
-                                {/* {(only || plusReady) &&
-                                    <>
-                                        {children}
-                                    </>
-                                } */}
-                            </Space>
-                        </Footer_Antd>
+                        <></>
+                        // <Footer_Antd onWheel={e => { e.currentTarget.scrollLeft += e.deltaY }} style={{ paddingBottom: `calc(${areaBottom} + 1rem)` }}>
+                        //     <Space>
+                        //         {/* <Button size="large" onClick={() => {
+                        //             const _index = index > 0 ? index - 1 : 0
+                        //             console.log(_index)
+                        //             // dispath(upIndex(_index))
+                        //             dispath(removeImg(index))
+                        //         }} danger icon={<DeleteOutlined />} /> */}
+                        //         {/* <DropScale name="scale" /> */}
+                        //         {/* <DropFilter name="filter" /> */}
+                        //         {/* <DropSwitch name="border" />
+                        //         <DropSwitch name="shadow" /> */}
+                        //         {/* {children} */}
+                        //         {/* {(only || plusReady) &&
+                        //             <>
+                        //                 {children}
+                        //             </>
+                        //         } */}
+                        //     </Space>
+                        // </Footer_Antd>
                         :
-                        plusReady ?
-                            <Footer_Antd>
-                            </Footer_Antd>
-                            :
+                        !plusReady &&
 
-                            <Footer_Antd>
                                 <Space split={<Divider type="vertical" />}>
                                     {/* <Popover open={pop} title="💴：7天/4元 15天/7元 30天/9元 永久/98元" trigger="hover" content={
                                     <Image src="https://shp.qpic.cn/collector/1523230910/3522ceeb-3d8f-484b-b86b-5d83c033c4dc/0" width={320} preview={false} />
@@ -193,10 +134,10 @@ function Footer(props: Props) {
                                     <Button type="text" target="_blank" size='small' href="https://github.com/WarmEpoch/mark_react">开源代码</Button>
                                     <Button type="text" target="_blank" size='small' href="https://beian.miit.gov.cn">粤ICP备2024312541号-2</Button>
                                 </Space>
-                            </Footer_Antd>
             }
             {/* {messageHolder} */}
-        </>
+            </div>
+       </Footer_Antd>
     )
 }
 

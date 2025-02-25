@@ -25,3 +25,6 @@ dist-ssr
 
 # app
 mark_app
+
+#visualizer
+stats.html

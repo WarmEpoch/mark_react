@@ -102,5 +102,10 @@ const Icons = (icons: Icons[]) => icons.map(icon => {
     }
 })
 
+export type Icon = ReturnType<typeof Icons>
+
+
 export const defaultIcons = Icons(_defaultIcons)
 export const cameraIcons = Icons(_cameraIcons)
+
+export const GetIcon = (make: string) => defaultIcons.find(icon => icon.describe == make.toLocaleLowerCase())?.val || cameraIcons.find(icon => icon.describe == make.toLocaleLowerCase())?.val || cameraIcons[0].val

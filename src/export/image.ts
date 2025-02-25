@@ -1,4 +1,4 @@
-export const imageDom = (url: string, crossorigin = false): Promise<HTMLImageElement> => {
+export const ImageDom = (url: string, crossorigin = false): Promise<HTMLImageElement> => {
     return new Promise((resolve) => {
         const img = new Image()
         img.onload = () => resolve(img)
@@ -7,101 +7,68 @@ export const imageDom = (url: string, crossorigin = false): Promise<HTMLImageEle
     })
 }
 
-export const imageDomSize = async (url: string): Promise<{ width: number, height: number }> => {
-    const dom = await imageDom(url)
+export const ImageSize = async (url: string): Promise<{ width: number, height: number }> => {
+    // const dom = await imageDom(url)
+    const img = await ('ImageBitmap' in self ? ImageToBitmap(url) : ImageDom(url))
     return {
-        width: dom.width,
-        height: dom.height
+        width: img.width,
+        height: img.height
     }
 }
 
-import { createCanvas, htmlCanvastoBlob } from './canvas'
+export const ImageToBitmap = async (url: string) => {
+    const blob = await fetch(url).then(res => res.blob())
+    return createImageBitmap(blob)
+}
 
-export const imageResize = async (blobUrl: string, width: number, quality = 1, type = 'image/jpeg') => {
-    const img = await imageDom(blobUrl)
-    const { width: imgWidth, height: imgHeight } = img
-    const canvas = createCanvas(width, width / imgWidth * imgHeight)
-    const context = canvas.getContext('2d') as CanvasRenderingContext2D
+export const CreateCanvasImageSource = async (url: string) => {
+    const img = await ('ImageBitmap' in self ? ImageToBitmap(url) : ImageDom(url))
+    return img
+}
+
+import { CreateCanvas, CanvasToBlob } from './canvas'
+
+export const ImageResize = async (blobUrl: string, width: number, quality = 1, type = 'image/jpeg') => {
+    const img = await CreateCanvasImageSource(blobUrl)
+    const { width: imgWidth, height: imgHeight } = await ImageSize(blobUrl)
+    const canvas = CreateCanvas(width, width / imgWidth * imgHeight)
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
     context.drawImage(img, 0, 0, canvas.width, canvas.height)
-    const blob = await htmlCanvastoBlob(canvas, quality, type)
-    return URL.createObjectURL(blob)
+    return CanvasToBlob(canvas, quality, type)
 }
 
-export const imgBlobToBase64 = (blob: Blob): Promise<string> => {
-    return new Promise((resolve) => {
-        const fileReader = new FileReader()
-        fileReader.onload = (e) => {
-            resolve(e.target?.result as string)
+import { ImageHead, parseMetaData, replaceHead, WriteExifData, writeExifData } from 'blueimp-load-image'
+
+export const ImageWriteExif = (blob: Blob, exifr: ImageHead['imageHead']) => {
+    return exifr && replaceHead(blob, exifr);
+};
+  
+type Exif = {
+    getAll: () => {
+        Make: string
+        Model: string
+        Exif: {
+            [key: string]: string
         }
-        fileReader.readAsDataURL(blob)
-    })
-}
-
-export const imgBase64ToBlob = (base64Image: string): Blob => {
-    // Split into two parts
-    const parts = base64Image.split(';base64,');
-
-    // Hold the content type
-    const imageType = parts[0].split(':')[1];
-
-    // Decode Base64 string
-    const decodedData = atob(parts[1]);
-
-    // Create UNIT8ARRAY of size same as row data length
-    const uInt8Array = new Uint8Array(decodedData.length);
-
-    // Insert all character code into uInt8Array
-    for (let i = 0; i < decodedData.length; ++i) {
-        uInt8Array[i] = decodedData.charCodeAt(i);
+        GPSInfo: {
+            [key: string]: string
+        }
     }
-
-    // Return BLOB image after conversion
-    const blob = new Blob([uInt8Array], { type: imageType });
-    return blob;
 }
 
-export const imgBase64Save = (base64: string, name: string): Promise<boolean> => {
-    const basePath = '_downloads'
-    return new Promise(resolve => {
-        plus.io.resolveLocalFileSystemURL(basePath, (directory) => {
-            directory.getFile(name, {
-                create: true,
-                exclusive: false,
-            }, (entry) => {
-                entry.createWriter((writer) => {
-                    writer.onwrite = () => {
-                        plus.gallery.save(`${basePath}/${name}`, () => {
-                            resolve(true)
-                            directory.getFile(name, {}, (file) => {
-                                file.remove()
-                            })
-                        })
-                    }
-                    writer.onerror = () => resolve(false)
-                    writer.seek(0)
-                    writer.writeAsBinary(base64.split(';base64,')[1])
-                }, () => resolve(false))
-            }, () => resolve(false))
-        }, () => resolve(false))
-    })
-}
 
-export const base64ToFile = (base64Data: string, filename: string) => {
-    // 将Base64字符串拆分为数据部分和MIME类型
-    const byteString = atob(base64Data.split(',')[1]);
-    
-    // 创建一个包含二进制数据的数组
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-  
-    // 创建Blob对象
-    const blob = new Blob([ab], { type: 'image/jpeg' }); // 这里假设是jpeg图片，根据实际情况修改MIME类型
-  
-    // 创建File对象
-    const file = new File([blob], filename, { type: 'image/jpeg' });
-  
-    return file;
-  }
+export const ImageLoadExif = async (file: Blob | File) => {
+    const data = await parseMetaData(file)
+    console.log('exifload', data)
+    if(!data.exif) return
+    const head = data.imageHead ? writeExifData(
+      data.imageHead,
+      data as unknown as WriteExifData,
+      'Orientation',
+      1
+    ) : data.imageHead
+    return {
+      imageHead: head,
+      exif: (data.exif as unknown as Exif).getAll()
+    };
+  };

@@ -1,0 +1,23 @@
+.panel{
+    width: 100%;
+    overflow: hidden;
+}
+
+.panel-container{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.panel-item{
+    flex: 0 0 100%;
+    overflow: auto;
+    width: 100%;
+    display: flex;
+}
+
+
+.panel-item .ant-space{
+    padding: 1rem;
+    margin: auto;
+}

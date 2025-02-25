@@ -20,15 +20,15 @@ body,p{
     margin: 0;
 }
 
-body, .ant-drawer-body{
+body {
     background: #f5f5f5;
 }
 
-img{
+img {
     display: block;
 }
 
-canvas,img{
+canvas,img {
     transition: opacity 3s;
 }
 
@@ -37,7 +37,7 @@ svg, canvas{
     height: 100%;
 }
 
-#root{
+/* #root{
     display: flex;
     flex-flow: column wrap;
     justify-content: space-between;
@@ -47,7 +47,20 @@ svg, canvas{
     flex: 1;
     display: inline-flex;
     align-items: center;
+} */
+
+
+::-webkit-scrollbar{
+    display: none;
 }
+
+.ant-layout{
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    height: 100%;
+}
+
 .ant-layout-header{
     padding: 0 6%;
     width: 100%;
@@ -58,10 +71,20 @@ svg, canvas{
     height: unset;
 }
 
-.ant-layout-footer{
-    padding: 1rem;
+.ant-layout-content{
+    flex: 1;
+    display: flex;
+    align-items: center;
     width: 100%;
-    overflow-x: auto;
+}
+
+.ant-layout-footer{
+    /* padding: 1rem; */
+    padding: 0;
+    /* margin: 1rem; */
+    width: 100%;
+    /* overflow-x: auto; */
+    overflow: hidden;
     display: flex;
 }
 
@@ -71,18 +94,17 @@ svg, canvas{
     /* max-width: 1080px; */
     margin: auto;
     /* justify-content: space-between; */
+    padding: 1rem;
+    /* overflow: auto; */
 }
 
-.ant-layout-footer::-webkit-scrollbar{
-    display: none;
-}
 
 .ant-layout-footer .ant-input[disabled]{
     color: inherit;
 }
 
 .ant-btn{
-    height: unset;
+    line-height: initial;
 }
 
 .ant-carousel{
@@ -94,16 +116,19 @@ svg, canvas{
     display: inline-block;
 }
 
-.mark{
+.mark {
     font-family: MiSans,MI Lan Pro,-apple-system,-apple-system-font;
-    position: fixed;
-    left: 100%;
+    position: fixed;    
     line-height: unset;
     display: none;
     overflow: auto;
 }
 
-.mark.show{
+.___html2canvas___pseudoelement_before .mark {
+    display: block;
+}
+
+.mark.show {
     display: block;
 }
 
@@ -111,8 +136,4 @@ svg, canvas{
     display: flex;
     align-items: center;
     padding: 0!important;
-}
-
-.ant-layout-content{
-    width: 100%;
-}
+}   

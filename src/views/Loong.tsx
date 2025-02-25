@@ -1,44 +1,71 @@
-import { useSelector } from "react-redux"
-import { RootState } from '../export/store'
-import Banner from "../components/Banner"
-import Draw from '../components/Draw'
-import DropInput from "../components/DropInput";
-import DropIcon from "../components/DropIcon";
-import Footer from "../components/Footer";
+import { useAtomValue } from "jotai"
+import { Exifr, imgsAtom } from "../export/store"
+import Draw from "../components/Draw"
+import DropInput from "../components/DropInput"
+import DropIcon from "../components/DropIcon"
+import { PanelRef, Panel } from "../components/Panel"
+import { Toggle } from "../components/Toggle"
+import { useRef } from "react"
+import { useConfig, useImageArgs } from "../export/hooks"
+import { GetIcon } from "../export/icons"
+
+const setting: Exifr[] = ['Model']
+
+const configures = {
+  border: 0,
+  shadow: 0,
+  filter: '',
+  icon: GetIcon('leica'),
+}
 
 const bottom = {
   vertical: '//web.immers.cn/assets/bottom/mi_long_vertical.png',
   horizontal: '//web.immers.cn/assets/bottom/mi_long_horizontal.png',
 }
+const options = ['龙行龘龘 前程朤朤']
 
-function Long() {
-  const imgs = useSelector((state: RootState) => state.imgs)
+export default function Loong() {
+  const imgs = useAtomValue(imgsAtom)
+  const [args, updateArg] = useImageArgs(imgs, setting, options)
+  const PanelRef = useRef<PanelRef>(null)
+  const [config, updateConfig] = useConfig(configures)
+  
   return (
     <>
-      <Banner>
+      <Toggle afterChange={current => PanelRef.current?.goTo(current)}>
         {
-          imgs.map(img =>
-            <Draw key={img.id} img={img}>
-              <div style={{ color: '#ecd69c', boxSizing: 'border-box', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: img.width > img.height ? '1.2em 2em' : '1.1em 2em', backgroundImage: img.width > img.height ? `url('${bottom.horizontal}')`: `url('${bottom.vertical}')`, backgroundRepeat: 'no-repeat', backgroundSize: '100% 100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', flexFlow: 'column wrap' }}>
-                  <p style={{ fontWeight: 'bold', fontSize: img.width > img.height ? '1.14em' : '1.1em' }}>{img.reveals.Model}</p>
-                </div>
-                <div style={{ display: 'flex', flexFlow: 'column wrap', justifyContent: 'center', position: 'relative', height: '2.3em', lineHeight: '2.3em' }}>
-                  <img src={img.reveals.icon} style={{ borderRight: `solid .06em #6e1b13`, height: 'calc(100% - .5em)', position: 'absolute', top: '.6em', left: '0', padding: '0 .5em', boxSizing: 'border-box', transform: 'translateX(calc(-100% - .5em))' }} />
-                  <p style={{ fontWeight: 'bold', fontSize: img.width > img.height ? '1.26em' : '1.2em' }}>{img.reveals.fuk}</p>
-                </div>
+          args.map(arg => (
+            <Draw key={arg.id} img={arg.img} config={config} setting={arg.setting} fillColor="#B01D16">
+              <div style={{ color: '#ecd69c', boxSizing: 'border-box', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: arg.img.width > arg.img.height ? '1.2em 2em' : '1.1em 2em', backgroundImage: arg.img.width > arg.img.height ? `url('${bottom.horizontal}')`: `url('${bottom.vertical}')`, backgroundRepeat: 'no-repeat', backgroundSize: '100% 100%' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', flexFlow: 'column wrap' }}><p style={{ fontWeight: 'bold', fontSize: arg.img.width > arg.img.height ? '1.14em' : '1.1em' }}>{arg.setting[0]}</p></div>
+                <div style={{ display: 'flex', flexFlow: 'column wrap', justifyContent: 'center', position: 'relative', height: '2.3em', lineHeight: '2.3em' }}><img src={config.icon} style={{ borderRight: `solid .06em #6e1b13`, height: 'calc(100% - .5em)', position: 'absolute', top: '.6em', left: '0', padding: '0 .5em', boxSizing: 'border-box', transform: 'translateX(calc(-100% - .5em))' }} /><p style={{ fontWeight: 'bold', fontSize: arg.img.width > arg.img.height ? '1.26em' : '1.2em' }}>{arg.setting[1]}</p></div>
               </div>
             </Draw>
-          )
+          ))
         }
-      </Banner>
-      <Footer>
-        <DropIcon name="icon" />
-        <DropInput name="Model" />
-        <DropInput name="fuk" />
-      </Footer>
+      </Toggle>
+      <Panel ref={PanelRef}>
+        {
+          args.map(arg => (
+            <Panel.Item key={arg.id} img={arg.img} config={config} updateConfig={updateConfig}>
+              <DropIcon
+                value={config.icon}
+                onChange={(value) => updateConfig.setIcon(value)}
+              />
+              {
+                arg.setting.map((setting, index) => (
+                  <DropInput 
+                    key={index} 
+                    value={setting} 
+                    img={arg.img} 
+                    onChange={value => updateArg(arg.id, index, value)}
+                  />
+                ))
+              }
+            </Panel.Item>
+          ))
+        }
+      </Panel>
     </>
   )
 }
-
-export default Long

@@ -13,7 +13,7 @@ export default (({ command, mode }) => {
       react(),
       viteVConsole({
         entry: resolve('src/main.tsx'), // or you can use entry: [path.resolve('src/main.ts')]
-        enabled: command === 'serve', // command === 'serve'
+        enabled: command === 'app', // command === 'serve'
         config: {
           theme: 'light'
         }
@@ -43,6 +43,10 @@ export default (({ command, mode }) => {
     ],
     server: {
       host: '0.0.0.0'
+    },
+    esbuild: {
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
+      minifyIdentifiers: false,  // 不混淆标识符
     },
   }
 })

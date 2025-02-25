@@ -1,45 +1,24 @@
 import { Button, Popover, Slider } from "antd"
-import { useSelector } from "react-redux"
-import { RootState, RImgModel, useAppDispatch, upSetting } from "../export/store";
 import { ReactElement } from "react";
-import { FileImageOutlined, FileImageFilled, BorderOuterOutlined, BorderInnerOutlined } from '@ant-design/icons';
 
 interface Props {
-    name: keyof RImgModel['setting']
+    value: number
+    onChange: (value: number) => void
+    icon: {
+        success: ReactElement
+        error: ReactElement
+    }
 }
 
-function DropSwitch(props: Props) {
-    const { name: key } = props
-    const imgs = useSelector((state: RootState) => state.imgs)
-    const index = useSelector((state: RootState) => state.index)
-    const dispath = useAppDispatch()
-
-    const Icon: {
-        [n in keyof RImgModel['setting']]: {
-            'success': ReactElement,
-            'error': ReactElement
-    }} = {
-        'border': {
-            'success': <BorderOuterOutlined />,
-            'error': <BorderInnerOutlined />
-        },
-        'shadow': {
-            'success': <FileImageFilled />,
-            'error': <FileImageOutlined />
-        },
-    }
+function DropSwitch({ value, onChange, icon }: Props) {
 
     return (
         <Popover content={
-            <Slider defaultValue={imgs[index]?.setting[key]} max={10} onChangeComplete={value => {
-                dispath(upSetting({
-                    index,
-                    key,
-                    value
-                }))
+            <Slider defaultValue={value} max={10} onChangeComplete={value => {
+                onChange(value)
             }} />
         } title>
-            <Button size="large" icon={imgs[index]?.setting[key] > 0 ? Icon[key]['success'] : Icon[key]['error']} />
+            <Button size="large" icon={value > 0 ? icon.success : icon.error} />
         </Popover>
     )
 }

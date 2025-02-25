@@ -1,71 +1,76 @@
-import canvasSize from "canvas-size"
-import { CanvasMaxType } from "./store"
+import { CreateCanvasImageSource } from "./image";
+import { CanvasMaxType } from "./store";
+import { BlobToBase64 } from "./util";
+import { isWorker } from "./worker/constants";
 
-export const htmlCanvastoBlob = (canvas: HTMLCanvasElement, quality = 1, type = 'image/jpeg'): Promise<Blob> => {
-    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob as Blob), type, quality))
+export const CanvasToBlob = (canvas: HTMLCanvasElement | OffscreenCanvas, quality = 1, type = 'image/jpeg') => {
+    return new Promise<Blob>((resolve, reject) => {
+      if('convertToBlob' in canvas){
+        canvas.convertToBlob({ type, quality }).then(blob => resolve(blob))
+      } else if('toBlob' in canvas){
+        canvas.toBlob((blob) => resolve(blob as Blob), type, quality)
+      } else {
+        reject('Canvas type error')
+      }
+    })
 }
 
-export const htmlCanvastoBase = (canvas: HTMLCanvasElement, quality = 1, type = 'image/jpeg'): Promise<string> => {
-    return new Promise((resolve) => resolve(canvas.toDataURL(type,quality)))
+export const CanvastoBase = (canvas: HTMLCanvasElement | OffscreenCanvas, quality = 1, type = 'image/jpeg') => {
+    return new Promise<string>((resolve, reject) => {
+      if('convertToBlob' in canvas){
+        canvas.convertToBlob({ type, quality }).then(blob => BlobToBase64(blob)).then(resolve)
+      }else if('toDataURL' in canvas){
+        resolve(canvas.toDataURL(type,quality))
+      }else{
+        reject('Canvas type error')
+      }
+    })
 }
 
-export const offScreenCanvastoBlob = (canvas: OffscreenCanvas, quality = 1, type = 'image/jpeg'): Promise<Blob> => {
-    return new Promise((resolve) => canvas.convertToBlob({ type, quality }).then(blob => resolve(blob)))
-}
-
-export const createCanvas = (width: number, height: number) => {
-    const canvas = document.createElement('canvas')
+export const CreateCanvas = (width: number, height: number) => {
+    const canvas = isWorker ? new OffscreenCanvas(width, height) : document.createElement('canvas')
     canvas.width = width
     canvas.height = height
     return canvas
 }
 
-
-export const CanvasMaxSize = async (): Promise<CanvasMaxType> => {
-  const CANVASMAX_KEY = 'CANVASMAX'
-  // localStorage.removeItem(CANVASMAX_KEY)
-  const localCanvasMax = localStorage.getItem(CANVASMAX_KEY)
-  if(localCanvasMax){
-    return JSON.parse(localCanvasMax)
-  }
-  const maxHeight = await canvasSize.maxHeight({
-    usePromise: true,
-    useWorker: true
-  }).then(({height}) => height)
-  const maxWidth = await canvasSize.maxWidth({
-    usePromise: true,
-    useWorker: true
-  }).then(({width}) => width)
-  const maxArea = await canvasSize.maxArea({
-    usePromise: true,
-    useWorker: true,
-  }).then(({ width, height }) => {
-    return { width, height }
-  })
-  const canvasMax = {
-    extent: maxArea.width === maxWidth && maxArea.height === maxHeight,
-    maxArea: maxArea.width * maxArea.height,
-    maxHeight,
-    maxWidth
-  }
-  localStorage.setItem(CANVASMAX_KEY, JSON.stringify(canvasMax))
-  return canvasMax
-}
-
-export const canvasMaximage = (width: number, height: number, maxHeight: number, maxWidth: number, maxArea: number, extent: boolean) => {
-  const valid = maxHeight >= height && maxWidth >= width && maxArea >= height * width
+export const CalculateSizeScale = (width: number, height: number, canvasMax: CanvasMaxType) => {
+  const valid = canvasMax.maxHeight >= height && canvasMax.maxWidth >= width && canvasMax.maxArea >= height * width
   
   const scale = valid ? 100 : (() => {
-      if(extent){
-          return Math.floor(width > height ? maxWidth / width * 100 : maxHeight / height * 100)
-      }else{
-          return Math.floor(Math.sqrt(maxArea / height / width) * 100)
+      if(canvasMax.extent){
+          return Math.floor(width > height ? canvasMax.maxWidth / width * 100 : canvasMax.maxHeight / height * 100)
+      } else {
+          return Math.floor(Math.sqrt(canvasMax.maxArea / height / width) * 100)
       }
   })()
 
   return {
     valid,
-    scale,
-    scaleM: scale / 100
+    scale: scale / 100,
   }
+}
+
+
+export const CanvasAddfilter = async (lutSrc: string, canvasData: ImageData) => {
+  const lutDom = await CreateCanvasImageSource(lutSrc)
+  const { width: lutWidth, height: lutHeight } = lutDom
+  const canvas = CreateCanvas(lutWidth, lutHeight)
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
+  context.drawImage(lutDom, 0, 0);
+  const lutData = context.getImageData(0, 0, lutWidth, lutHeight)
+  for (let i = 0; i < canvasData.data.length; i += 4) {
+      const r = Math.floor(canvasData.data[i] / 4);
+      const g = Math.floor(canvasData.data[i + 1] / 4);
+      const b = Math.floor(canvasData.data[i + 2] / 4);
+
+      const lutX = (b % 8) * (lutWidth / 8) + r;
+      const lutY = Math.floor(b / 8) * (lutWidth / 8) + g;
+      const lutIndex = (lutY * lutWidth + lutX) * 4;
+      
+      canvasData.data[i] = lutData.data[lutIndex];
+      canvasData.data[i + 1] = lutData.data[lutIndex + 1];
+      canvasData.data[i + 2] = lutData.data[lutIndex + 2];
+  }
+  return canvasData
 }
