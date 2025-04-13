@@ -2,7 +2,7 @@
   "name": "mark_react",
   "private": true,
   "description": "Mark generator tool developed based on React",
-  "version": "25.02.18",
+  "version": "25.04.13",
   "type": "module",
   "scripts": {
     "dev": "vite",

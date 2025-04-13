@@ -13,11 +13,11 @@ const pageTsx = import.meta.glob("../views/**");
 const routesConfig = [
   {
     path: "/mi",
-    name: "小米徕卡",
+    name: "浅色落框",
   },
   {
     path: "/si",
-    name: "巳蛇落框",
+    name: "巳巳落框",
   },
   {
     path: "/frame",
@@ -45,11 +45,11 @@ const routesConfig = [
   },
   {
     path: "/xmage",
-    name: "华为影像",
+    name: "浅色扇坠",
   },
   {
     path: "/loong",
-    name: "龙行龘龘",
+    name: "游龙落框",
   },
 ];
 
