@@ -7,12 +7,13 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 
 interface Props {
-  img: ImgModel
-  value: string
-  onChange: (value: string) => void
+  img: ImgModel;
+  value: string;
+  onChange: (value: string) => void;
 }
+
 function DropInput({ img, value, onChange }: Props) {
-  const [reveals, setReveals] = useAtom(revealsAtom)
+  const [reveals, setReveals] = useAtom(revealsAtom);
 
   const loong = [
     "龙年大吉 万事如意",
@@ -34,108 +35,91 @@ function DropInput({ img, value, onChange }: Props) {
     "蛇年大吉 万事如意",
     "吉星高照 国泰民安",
     "鸿运当头 前程似锦",
-  ]
+  ];
 
-  const createIconMenuItems = (item: [string, string][]) => {
-    return item
-    .map((item) => {
-      return {
-        key: item[0],
+  // 创建带唯一 key 的菜单项
+  const createIconMenuItems = (prefix: string, items: [string, string][]) => {
+    return items.map((item, index) => ({
+      key: `${prefix}-${index}`, // 使用前缀 + 索引确保唯一性
+      label: (
+        <a onClick={(e) => {
+          e.preventDefault();
+          onChange(item[1]);
+        }}>
+          {item[1]}
+        </a>
+      ),
+      disabled: item[1] === value,
+    }));
+  };
+
+  // 构建菜单项
+  const items: MenuProps["items"] = [
+    {
+      key: "Default",
+      label: "默认参数",
+      children: createIconMenuItems("default", Object.entries(img.exifr ?? [])),
+    },
+    {
+      key: "Loong",
+      label: "龙行龘龘",
+      children: createIconMenuItems("loong", Object.entries(loong)),
+    },
+    {
+      key: "Si",
+      label: "巳巳如意",
+      children: createIconMenuItems("si", Object.entries(si)),
+    },
+  ];
+
+  // 如果当前有值，则添加“清空”选项
+  if (value) {
+    items.unshift({
+      key: "None",
+      label: (
+        <a
+          onClick={(e) => {
+            e.preventDefault();
+            onChange("");
+          }}
+        >
+          清空
+        </a>
+      ),
+      disabled: false,
+    });
+  }
+
+  // 添加自定义记忆项
+  if (reveals.length) {
+    items.push({
+      key: "Reveals",
+      label: "自定义参数",
+      children: reveals.map((reveal, index) => ({
+        key: `reveal-${index}`,
         label: (
           <a
             onClick={(e) => {
-              e.preventDefault()
-              onChange(item[1])
+              e.preventDefault();
+              onChange(reveal);
             }}
           >
-            {item[1]}
-          </a>
-        ),
-        disabled: item[1] === value,
-      };
-    })
-  } 
-  const items: MenuProps["items"] = (() => {
-    const items: MenuProps["items"] = [
-      {
-        key: "Default",
-        label: "默认参数",
-        children: createIconMenuItems(Object.entries(img.exifr ?? []))
-      },
-      {
-        key: "Loong",
-        label: "龙行龘龘",
-        children: createIconMenuItems(Object.entries(loong))
-      },
-      {
-        key: "Si",
-        label: "巳巳如意",
-        children: createIconMenuItems(Object.entries(si))
-      }
-    ];
-    if (value) {
-      items.unshift({
-        key: "None",
-        label: (
-          <a
-            onClick={(e) => {
-              e.preventDefault()
-              onChange('')
-            }}
-          >
-            清空
+            {reveal}
           </a>
         ),
         disabled: false,
-      });
-    }
-
-    if (reveals.length) {
-      items.push({
-        key: "Reveals",
-        label: "自定义参数",
-        children: Object.entries(reveals).map((reveal) => {
-          return {
-            key: `reveal-${reveal}`,
-            label: (
-              <a
-                onClick={(e) => {
-                  e.preventDefault()
-                  onChange(reveal[1])
-                }}
-              >
-                {reveal[1]}
-              </a>
-            ),
-            disabled: false,
-          };
-        }),
-      });
-    }
-
-    return items;
-  })();
+      })),
+    });
+  }
 
   const [tipShow, setTipShow] = useState(false);
   const [focus, setFocus] = useState(false);
   const [tip, setTip] = useState("");
 
   const Enter = (target: HTMLInputElement) => {
-    // TODO: 重新完成删除逻辑
-    // const _index = reveals.findIndex((reveal) => reveal === target.value);
-    // if (_index >= 0) {
-    //   setReveals(reveals.filter((reveal) => reveal !== target.value));
-    //   dispath(
-    //     upSetting({
-    //       index,
-    //       key,
-    //       value: void 0,
-    //     })
-    //   );
-    // } else
     if (tipShow && target.value.trim() !== "") {
-      onChange(target.value)
-      setReveals(reveals.concat(target.value));
+      onChange(target.value);
+      setReveals([...reveals, target.value]);
     }
     setTipShow(false);
   };
@@ -144,14 +128,13 @@ function DropInput({ img, value, onChange }: Props) {
     const value = target.value.trim();
     if (value === "") {
       setTip("不能为空");
-    } else if (reveals.findIndex((reveal) => reveal === value) >= 0) {
+    } else if (reveals.includes(value)) {
       setTip("请按确定删除此自定义");
       setTipShow(true);
     } else {
       setTip("请按确定确认输入");
     }
   };
-
 
   return (
     <Dropdown.Button menu={{ items }} size="large">
