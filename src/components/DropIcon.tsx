@@ -106,7 +106,7 @@ function DropIcon({ value, onChange }: Props) {
                 {icon.name}
               </a>
             ),
-            disabled: true,
+            disabled: false,
           };
         }),
       });

@@ -113,9 +113,9 @@ function App() {
       
       // console.log(exif.GPSInfo[exif.GPSInfo.map["GPSLongitudeRef"]], exif.Exif[exif.Exif.map['LensMake']])
 
-      // console.log("照片参数：", output, exifs);
-      const longitude = exifs.exif.GPSInfo?.['GPSLongitude'].split(',').map(Number).map(Math.round)
-      const latitude = exifs.exif.GPSInfo?.['GPSLatitude'].split(',').map(Number).map(Math.round)
+      console.log("照片参数：", exifs);
+      const longitude = typeof exifs.exif.GPSInfo == 'object' && exifs.exif.GPSInfo.GPSLongitude ? exifs.exif.GPSInfo.GPSLongitude.split(',').map(Number).map(Math.round) : []
+      const latitude = typeof exifs.exif.GPSInfo == 'object' && exifs.exif.GPSInfo.GPSLatitude ? exifs.exif.GPSInfo.GPSLatitude.split(',').map(Number).map(Math.round) : []
         AddImg({
           id: id,
           name: file.name.split(".")[0],
@@ -146,13 +146,13 @@ function App() {
                 : `1/${Math.round(1 / Number(exifs.exif.Exif['ExposureTime']))}`
               : void 0,
             LatitudeRef:
-              exifs.exif.GPSInfo?.['GPSLatitudeRef'] ? `${latitude[0]}°${latitude[1]}'${latitude[2]}"${
-                exifs.exif.GPSInfo['GPSLatitudeRef']
+            latitude.length ? `${latitude[0]}°${latitude[1]}'${latitude[2]}"${
+                exifs.exif.GPSInfo.GPSLatitudeRef
                   }`
                 : void 0,
             LongitudeRef:
-              exifs.exif.GPSInfo?.['GPSLongitudeRef'] ? `${longitude[0]}°${longitude[1]}'${longitude[2]}"${
-                exifs.exif.GPSInfo['GPSLongitudeRef']
+            longitude.length ? `${longitude[0]}°${longitude[1]}'${longitude[2]}"${
+                exifs.exif.GPSInfo.GPSLongitudeRef
                   }`
                 : void 0,
             // LensModel: exifs.exif.Exif['LensModel'] || void 0,
